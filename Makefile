@@ -2,7 +2,7 @@ EXE = image_editor
 FLAGS = -Wall -Wextra
 VAL_FLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
-FILES = src/main.c src/defines.h src/cmd_utils.h src/cmd_utils.c
+FILES = src/main.c src/defines.h src/cmd_utils.h src/cmd_utils.c src/file_utils.h src/file_utils.c
 
 build: $(FILES)
 	gcc $(FILES) -o $(EXE) $(FLAGS)

@@ -4,23 +4,13 @@
 
 #include "cmd_utils.h"
 #include "defines.h"
-
-typedef struct pgm_point {
-  char red;
-  char green;
-  char blue;
-} pgm_point_t;
-
-typedef struct pgm_file {
-  char *filename;
-  int width, height;
-  pgm_point_t **mat;
-} pgm_file_t;
+#include "file_utils.h"
+#include "structs.h"
 
 int main() {
   char cmd_buffer[1 + CMD_BUFFER_SIZE];
 
-  pgm_file_t current_file = {NULL, 0, 0, NULL};
+  image_file_t current_file = {NULL, 0, 0, 0, -1, NULL};
 
   while (1) {
     printf("> ");
@@ -55,12 +45,33 @@ int main() {
       fprintf(stderr, "[debug] Loading file: '%s'\n", filename);
 #endif
 
-      // FILE *file = fopen(filename, "rb");
+      FILE *file = fopen(filename, "rb");
 
-      free(filename);
+      if (!file) {
+        fprintf(stderr, "Failed to load %s\n", filename);
+        free(filename);
+        continue;
+      }
+
+      current_file.filename = filename;
+
+      if (!parse_image_file(file, &current_file)) {
+        fprintf(stderr, "Failed to load %s\n", filename);
+        // free_pgm_file(current_file);
+      }
+
+      fclose(file);
     }
 
+#ifdef MODE_DEBUG
+    else if (check_command(cmd_buffer, "SHOW")) {
+      fprintf(stderr, "[debug] Loaded filename: %s\n", current_file.filename);
+    }
+#endif
     else if (check_command(cmd_buffer, "EXIT")) {
+      if (current_file.filename != NULL) {
+        free(current_file.filename);
+      }
       return 0;
     }
   }
