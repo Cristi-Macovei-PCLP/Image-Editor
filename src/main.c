@@ -33,6 +33,11 @@ int main() {
 
     // load command
     if (check_command(cmd_buffer, "LOAD")) {
+      // free loaded file if exists
+      if (current_file.filename != NULL) {
+        free_image_file(&current_file);
+      }
+
       char *filename = NULL;
       get_load_cmd_arg(cmd_buffer, &filename);
 
@@ -57,7 +62,7 @@ int main() {
 
       if (!parse_image_file(file, &current_file)) {
         fprintf(stderr, "Failed to load %s\n", filename);
-        // free_pgm_file(current_file);
+        free_image_file(&current_file);
       }
 
       fclose(file);
@@ -70,7 +75,7 @@ int main() {
 #endif
     else if (check_command(cmd_buffer, "EXIT")) {
       if (current_file.filename != NULL) {
-        free(current_file.filename);
+        free_image_file(&current_file);
       }
       return 0;
     }

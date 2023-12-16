@@ -19,3 +19,13 @@ typedef struct image_file {
   int type;
   void **mat;
 } image_file_t;
+
+typedef struct position {
+  int line, col;
+} position_t;
+
+typedef struct selection {
+  position_t top_left;
+  position_t top_right;
+  int is_all;
+} selection_t;

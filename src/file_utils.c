@@ -174,3 +174,12 @@ int parse_image_file(FILE *file, image_file_t *img_file) {
 
   return 1;
 }
+
+void free_image_file(image_file_t *img_file) {
+  free(img_file->filename);
+
+  for (int i = 0; i < img_file->height; ++i) {
+    free(img_file->mat[i]);
+  }
+  free(img_file->mat);
+}
