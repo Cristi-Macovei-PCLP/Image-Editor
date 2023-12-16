@@ -1,21 +1,23 @@
 EXE = image_editor
 FLAGS = -Wall -Wextra
-VAL_FLAGS = --leak-check=full --show-leak-kinds=all --track-origin=yes
+VAL_FLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
-build:
-	gcc src/main.c -o $(EXE) $(FLAGS)
+FILES = src/main.c src/defines.h src/cmd_utils.h src/cmd_utils.c
 
-buildd:
-	gcc -g src/main.c -o $(EXE) $(FLAGS) -D MODE_DEBUG
+build: $(FILES)
+	gcc $(FILES) -o $(EXE) $(FLAGS)
 
-run:
+buildd: $(FILES)
+	gcc -g $(FILES) -o $(EXE) $(FLAGS) -D MODE_DEBUG
+
+run: $(FILES)
 	make build
 	./$(EXE)
 
-rund:
+rund: $(FILES)
 	make buildd
 	./$(EXE)
 
-runval:
+runval: $(FILES)
 	make buildd
 	valgrind $(VAL_FLAGS) ./$(EXE)
