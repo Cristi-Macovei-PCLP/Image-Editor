@@ -74,3 +74,26 @@ void get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel) {
   }
   ptr_sel->is_all = 0;
 }
+
+// todo this also needs to return int
+void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y) {
+  char *p = strtok(cmd_buffer, " ");
+  int arg_index = 0;
+  while (p) {
+    if (strlen(p) == 0) {
+      p = strtok(NULL, " ");
+      continue;
+    }
+
+    printf("p = '%s'\n", p);
+
+    if (arg_index == 1) {
+      *ptr_x = atoi(p);
+    } else if (arg_index == 2) {
+      *ptr_y = atoi(p);
+    }
+
+    ++arg_index;
+    p = strtok(NULL, " ");
+  }
+}

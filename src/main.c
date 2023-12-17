@@ -5,6 +5,7 @@
 #include "cmd_utils.h"
 #include "defines.h"
 #include "file_utils.h"
+#include "histograms.h"
 #include "structs.h"
 
 int main() {
@@ -94,6 +95,23 @@ int main() {
               current_sel.top_left.line, current_sel.top_left.col,
               current_sel.top_right.line, current_sel.top_right.col);
 #endif
+    }
+
+    else if (check_command(cmd_buffer, "HISTOGRAM")) {
+      if (!has_file) {
+        fprintf(stderr, "No image loaded\n");
+        continue;
+      }
+
+      if (current_file.type != IMAGE_TYPE_PGM) {
+        fprintf(stderr, "Black and white image needed\n");
+        continue;
+      }
+
+      int x, y;
+      get_histogram_cmd_args(cmd_buffer, &x, &y);
+
+      print_histogram(&current_file, x, y);
     }
 
     else if (check_command(cmd_buffer, "EXIT")) {

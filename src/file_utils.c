@@ -11,13 +11,13 @@ int __is_empty_character(char c) {
 }
 
 void __read_one_point_data(FILE *file, int *ptr_data, int num_bytes) {
-  char byte1;
+  unsigned char byte1;
   fread(&byte1, 1 * sizeof(char), 1, file);
 
   *ptr_data = (int)byte1;
 
   if (num_bytes == 2) {
-    char byte2;
+    unsigned char byte2;
     fread(&byte2, 1 * sizeof(char), 1, file);
 
     *ptr_data = 0xff * (*ptr_data) + (int)byte2;
