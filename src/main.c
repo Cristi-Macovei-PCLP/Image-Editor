@@ -10,7 +10,11 @@
 int main() {
   char cmd_buffer[1 + CMD_BUFFER_SIZE];
 
+  int has_file = 0;
   image_file_t current_file = {NULL, 0, 0, 0, -1, NULL};
+
+  int has_sel = 0;
+  selection_t current_sel = {{0, 0}, {0, 0}, 0};
 
   while (1) {
     printf("> ");
@@ -54,14 +58,17 @@ int main() {
 
       if (!file) {
         fprintf(stderr, "Failed to load %s\n", filename);
+        has_file = 0;
         free(filename);
         continue;
       }
 
       current_file.filename = filename;
 
+      has_file = 1;
       if (!parse_image_file(file, &current_file)) {
         fprintf(stderr, "Failed to load %s\n", filename);
+        has_file = 0;
         free_image_file(&current_file);
       }
 
@@ -73,8 +80,26 @@ int main() {
       fprintf(stderr, "[debug] Loaded filename: %s\n", current_file.filename);
     }
 #endif
+
+    else if (check_command(cmd_buffer, "SELECT")) {
+      // todo get data into another object and restore old object if invalid
+      get_select_cmd_args(cmd_buffer, &current_sel);
+
+      // todo check if selection is valid
+
+      has_sel = 1;
+
+#ifdef MODE_DEBUG
+      fprintf(stderr, "[debug] Selected %d,%d --> %d,%d\n",
+              current_sel.top_left.line, current_sel.top_left.col,
+              current_sel.top_right.line, current_sel.top_right.col);
+#endif
+    }
+
     else if (check_command(cmd_buffer, "EXIT")) {
       if (current_file.filename != NULL) {
+        has_file = 0;
+        has_sel = 0;
         free_image_file(&current_file);
       }
       return 0;
