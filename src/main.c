@@ -3,7 +3,9 @@
 #include <string.h>
 
 #include "cmd_utils.h"
+#include "crop.h"
 #include "defines.h"
+#include "equalize.h"
 #include "file_utils.h"
 #include "histograms.h"
 #include "structs.h"
@@ -128,6 +130,22 @@ int main() {
       get_histogram_cmd_args(cmd_buffer, &x, &y);
 
       print_histogram(&current_file, x, y);
+    }
+
+    else if (check_command(cmd_buffer, "EQUALIZE")) {
+      if (!has_file) {
+        fprintf(stderr, "No image loaded\n");
+        continue;
+      }
+
+      if (current_file.type != IMAGE_TYPE_PGM) {
+        fprintf(stderr, "Black and white image needed\n");
+        continue;
+      }
+
+      equalize_image(&current_file);
+
+      printf("Equalization done\n");
     }
 
     else if (check_command(cmd_buffer, "SAVE")) {
