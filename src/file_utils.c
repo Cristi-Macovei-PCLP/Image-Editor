@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "defines.h"
 #include "structs.h"
@@ -173,6 +174,80 @@ int parse_image_file(FILE *file, image_file_t *img_file) {
 #endif
 
   return 1;
+}
+
+char *itoa(int a) {
+  int nd = 0;
+  int _a = a;
+
+  do {
+    ++nd;
+    _a /= 10;
+  } while (_a);
+
+  char *string = malloc((1 + nd) * sizeof(char));
+
+  int index = nd;
+  do {
+    int digit = a % 10;
+    a /= 10;
+
+    --index;
+    string[index] = (char)(digit + '0');
+  } while (a);
+
+  string[nd] = '\0';
+
+  return string;
+}
+
+// * tested only for P5 files, with max = 255
+void save_image_binary(image_file_t *img_file, char *filename) {
+  FILE *file = fopen(filename, "wb");
+  char LF_CHAR = 0x0a;
+  char SPC_CHAR = ' ';
+
+  if (img_file->type == IMAGE_TYPE_PGM) {
+    // write magic constants
+    fwrite("P5", 2, 1, file);
+    fwrite(&LF_CHAR, 1, 1, file);
+
+    char *string_width = itoa(img_file->width);
+    fwrite(string_width, strlen(string_width), 1, file);
+    free(string_width);
+
+    fwrite(&SPC_CHAR, 1, 1, file);
+
+    char *string_height = itoa(img_file->height);
+    fwrite(string_height, strlen(string_height), 1, file);
+    free(string_height);
+
+    fwrite(&LF_CHAR, 1, 1, file);
+
+    char *string_max_val = itoa(img_file->color_max_value);
+    fwrite(string_max_val, strlen(string_max_val), 1, file);
+    free(string_height);
+
+    fwrite(&LF_CHAR, 1, 1, file);
+
+    for (int i = 0; i < img_file->height; ++i) {
+      for (int j = 0; j < img_file->width; ++j) {
+        if (img_file->color_max_value <= 255) {
+          unsigned char value = ((pgm_point_t **)img_file->mat)[i][j].grey;
+          fwrite(&value, 1, 1, file);
+        } else {
+          unsigned short value = ((pgm_point_t **)img_file->mat)[i][j].grey;
+          unsigned char byte1 = value / 0xff;
+          unsigned char byte2 = value % 0xff;
+
+          fwrite(&byte1, 1, 1, file);
+          fwrite(&byte2, 1, 1, file);
+        }
+      }
+    }
+  }
+
+  fclose(file);
 }
 
 void free_image_file(image_file_t *img_file) {

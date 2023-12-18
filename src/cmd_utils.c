@@ -85,12 +85,33 @@ void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y) {
       continue;
     }
 
-    printf("p = '%s'\n", p);
+    // printf("p = '%s'\n", p);
 
     if (arg_index == 1) {
       *ptr_x = atoi(p);
     } else if (arg_index == 2) {
       *ptr_y = atoi(p);
+    }
+
+    ++arg_index;
+    p = strtok(NULL, " ");
+  }
+}
+
+void get_save_cmd_args(char *cmd_buffer, char **ptr_filename) {
+  char *p = strtok(cmd_buffer, " ");
+  int arg_index = 0;
+
+  while (p) {
+    if (strlen(p) == 0) {
+      p = strtok(NULL, " ");
+      continue;
+    }
+
+    if (arg_index == 1) {
+      char *filename = malloc((1 + strlen(p)) * sizeof(char));
+      strcpy(filename, p);
+      *ptr_filename = filename;
     }
 
     ++arg_index;

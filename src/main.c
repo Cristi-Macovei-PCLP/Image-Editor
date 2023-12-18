@@ -114,6 +114,17 @@ int main() {
       print_histogram(&current_file, x, y);
     }
 
+    else if (check_command(cmd_buffer, "SAVE")) {
+      char *filename;
+      get_save_cmd_args(cmd_buffer, &filename);
+
+      printf("Saving to %s\n", filename);
+
+      save_image_binary(&current_file, filename);
+
+      free(filename);
+    }
+
     else if (check_command(cmd_buffer, "EXIT")) {
       if (current_file.filename != NULL) {
         has_file = 0;
