@@ -26,6 +26,6 @@ typedef struct position {
 
 typedef struct selection {
   position_t top_left;
-  position_t top_right;
+  position_t bot_right;
   int is_all;
 } selection_t;

@@ -93,8 +93,24 @@ int main() {
 #ifdef MODE_DEBUG
       fprintf(stderr, "[debug] Selected %d,%d --> %d,%d\n",
               current_sel.top_left.line, current_sel.top_left.col,
-              current_sel.top_right.line, current_sel.top_right.col);
+              current_sel.bot_right.line, current_sel.bot_right.col);
 #endif
+    }
+
+    else if (check_command(cmd_buffer, "CROP")) {
+      if (!has_file) {
+        fprintf(stderr, "No image loaded\n");
+        continue;
+      }
+
+      if (!has_sel) {
+        fprintf(stderr, "No selection set\n");
+        continue;
+      }
+
+      crop_image(&current_file, &current_sel);
+
+      printf("Cropped image\n");
     }
 
     else if (check_command(cmd_buffer, "HISTOGRAM")) {

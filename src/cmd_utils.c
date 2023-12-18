@@ -64,9 +64,9 @@ void get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel) {
     } else if (arg_index == 2) {
       ptr_sel->top_left.col = atoi(p);
     } else if (arg_index == 3) {
-      ptr_sel->top_right.line = atoi(p);
+      ptr_sel->bot_right.line = atoi(p);
     } else if (arg_index == 4) {
-      ptr_sel->top_right.col = atoi(p);
+      ptr_sel->bot_right.col = atoi(p);
     }
 
     ++arg_index;
