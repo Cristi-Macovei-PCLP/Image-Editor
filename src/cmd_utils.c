@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "defines.h"
 #include "structs.h"
 
 int check_command(char *cmd_buffer, char *cmd_name) {
@@ -112,6 +113,35 @@ void get_save_cmd_args(char *cmd_buffer, char **ptr_filename) {
       char *filename = malloc((1 + strlen(p)) * sizeof(char));
       strcpy(filename, p);
       *ptr_filename = filename;
+    }
+
+    ++arg_index;
+    p = strtok(NULL, " ");
+  }
+}
+
+void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg) {
+  char *p = strtok(cmd_buffer, " ");
+  int arg_index = 0;
+
+  while (p) {
+    if (strlen(p) == 0) {
+      p = strtok(NULL, " ");
+      continue;
+    }
+
+    if (arg_index == 1) {
+      if (strcmp(p, "EDGE") == 0) {
+        *ptr_arg = APPLY_PARAM_EDGE;
+      } else if (strcmp(p, "SHARPEN")) {
+        *ptr_arg = APPLY_PARAM_SHARPEN;
+      } else if (strcmp(p, "BLUR")) {
+        *ptr_arg = APPLY_PARAM_BLUR;
+      } else if (strcmp(p, "GAUSSIAN_BLUR")) {
+        *ptr_arg = APPLY_PARAM_GAUSSIAN_BLUR;
+      } else {
+        *ptr_arg = APPLY_PARAM_BAD;
+      }
     }
 
     ++arg_index;

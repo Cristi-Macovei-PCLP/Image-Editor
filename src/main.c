@@ -132,6 +132,26 @@ int main() {
       print_histogram(&current_file, x, y);
     }
 
+    else if (check_command(cmd_buffer, "APPLY")) {
+      if (!has_file) {
+        fprintf(stderr, "No image loaded\n");
+        continue;
+      }
+
+      if (current_file.type == IMAGE_TYPE_PGM) {
+        fprintf(stderr, "Easy, Charlie Chaplin\n");
+        continue;
+      }
+
+      int apply_param_type = APPLY_PARAM_BAD;
+      get_apply_cmd_args(cmd_buffer, &apply_param_type);
+
+      if (apply_param_type == APPLY_PARAM_BAD) {
+        fprintf(stderr, "APPLY parametru invalid");
+        continue;
+      }
+    }
+
     else if (check_command(cmd_buffer, "EQUALIZE")) {
       if (!has_file) {
         fprintf(stderr, "No image loaded\n");
