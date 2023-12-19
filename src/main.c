@@ -9,6 +9,7 @@
 #include "equalize.h"
 #include "file_utils.h"
 #include "histograms.h"
+#include "rotate.h"
 #include "structs.h"
 
 int main() {
@@ -117,6 +118,27 @@ int main() {
       printf("Cropped image\n");
     }
 
+    else if (check_command(cmd_buffer, "ROTATE")) {
+      int angle = 90;
+      // parse_rotate_cmd_args(cmd_buffer, &angle);
+
+      if (!has_file) {
+        fprintf(stderr, "No image loaded\n");
+        continue;
+      }
+
+      if (!has_sel) {
+        fprintf(stderr, "No selection set");
+        continue;
+      }
+
+      if (current_sel.is_all) {
+        rotate_all(&current_file, angle);
+      } else {
+        rotate_square(&current_file, &current_sel, angle);
+      }
+    }
+
     else if (check_command(cmd_buffer, "HISTOGRAM")) {
       if (!has_file) {
         fprintf(stderr, "No image loaded\n");
@@ -173,8 +195,13 @@ int main() {
     }
 
     else if (check_command(cmd_buffer, "SAVE")) {
-      char *filename;
+      char *filename = NULL;
       get_save_cmd_args(cmd_buffer, &filename);
+
+      if (!filename) {
+        fprintf(stderr, "No filename given\n");
+        continue;
+      }
 
       printf("Saving to %s\n", filename);
 
