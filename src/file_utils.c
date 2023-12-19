@@ -245,16 +245,88 @@ void save_image_binary(image_file_t *img_file, char *filename) {
         }
       }
     }
+  } else if (img_file->type == IMAGE_TYPE_PPM) {
+    // write magic constants
+    fwrite("P6", 2, 1, file);
+    fwrite(&LF_CHAR, 1, 1, file);
+
+    char *string_width = itoa(img_file->width);
+    fwrite(string_width, strlen(string_width), 1, file);
+    free(string_width);
+
+    fwrite(&SPC_CHAR, 1, 1, file);
+
+    char *string_height = itoa(img_file->height);
+    fwrite(string_height, strlen(string_height), 1, file);
+    free(string_height);
+
+    fwrite(&LF_CHAR, 1, 1, file);
+
+    char *string_max_val = itoa(img_file->color_max_value);
+    fwrite(string_max_val, strlen(string_max_val), 1, file);
+    free(string_height);
+
+    fwrite(&LF_CHAR, 1, 1, file);
+
+    for (int i = 0; i < img_file->height; ++i) {
+      for (int j = 0; j < img_file->width; ++j) {
+        // red
+        if (img_file->color_max_value <= 255) {
+          unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].red;
+          fwrite(&value, 1, 1, file);
+        } else {
+          unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].red;
+          unsigned char byte1 = value / 0xff;
+          unsigned char byte2 = value % 0xff;
+
+          fwrite(&byte1, 1, 1, file);
+          fwrite(&byte2, 1, 1, file);
+        }
+
+        // green
+        if (img_file->color_max_value <= 255) {
+          unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].green;
+          fwrite(&value, 1, 1, file);
+        } else {
+          unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].green;
+          unsigned char byte1 = value / 0xff;
+          unsigned char byte2 = value % 0xff;
+
+          fwrite(&byte1, 1, 1, file);
+          fwrite(&byte2, 1, 1, file);
+        }
+
+        // red
+        if (img_file->color_max_value <= 255) {
+          unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].blue;
+          fwrite(&value, 1, 1, file);
+        } else {
+          unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].blue;
+          unsigned char byte1 = value / 0xff;
+          unsigned char byte2 = value % 0xff;
+
+          fwrite(&byte1, 1, 1, file);
+          fwrite(&byte2, 1, 1, file);
+        }
+      }
+    }
   }
 
   fclose(file);
 }
 
 void free_image_file(image_file_t *img_file) {
-  free(img_file->filename);
-
-  for (int i = 0; i < img_file->height; ++i) {
-    free(img_file->mat[i]);
+  if (img_file->filename != NULL) {
+    free(img_file->filename);
+    img_file->filename = NULL;
   }
-  free(img_file->mat);
+
+  if (img_file->mat != NULL) {
+    for (int i = 0; i < img_file->height; ++i) {
+      free(img_file->mat[i]);
+    }
+    free(img_file->mat);
+
+    img_file->mat = NULL;
+  }
 }

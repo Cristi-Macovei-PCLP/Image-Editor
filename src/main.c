@@ -183,9 +183,7 @@ int main() {
     }
 
     else if (check_command(cmd_buffer, "EXIT")) {
-      if (current_file.filename != NULL) {
-        has_file = 0;
-        has_sel = 0;
+      if (has_file) {
         free_image_file(&current_file);
       }
       return 0;
