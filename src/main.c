@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "apply_param.h"
 #include "cmd_utils.h"
 #include "crop.h"
 #include "defines.h"
@@ -150,6 +151,8 @@ int main() {
         fprintf(stderr, "APPLY parametru invalid");
         continue;
       }
+
+      apply_param(&current_file, apply_param_type);
     }
 
     else if (check_command(cmd_buffer, "EQUALIZE")) {
