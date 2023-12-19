@@ -63,7 +63,7 @@ int apply_param(image_file_t *img_file, int param_type) {
   printf("MERGE PANA AICI 1\n");
 
   ppm_point_t **copy = malloc(img_file->height * sizeof(ppm_point_t *));
-  for (int i = 0; i < img_file->width; ++i) {
+  for (int i = 0; i < img_file->height; ++i) {
     copy[i] = malloc(img_file->width * sizeof(ppm_point_t));
   }
 
@@ -103,10 +103,10 @@ int apply_param(image_file_t *img_file, int param_type) {
 
   printf("MERGE PANA AICI 2\n");
 
-  // for (int i = 0; i < img_file->height; ++i) {
-  //   free(img_file->mat[i]);
-  // }
-  // free(img_file->mat);
+  for (int i = 0; i < img_file->height; ++i) {
+    free(img_file->mat[i]);
+  }
+  free(img_file->mat);
 
   printf("MERGE PANA AICI 3\n");
 

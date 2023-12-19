@@ -42,7 +42,8 @@ int main() {
     // load command
     if (check_command(cmd_buffer, "LOAD")) {
       // free loaded file if exists
-      if (current_file.filename != NULL) {
+      if (has_file) {
+        printf("Freeing existing file\n");
         free_image_file(&current_file);
       }
 
@@ -183,8 +184,19 @@ int main() {
     }
 
     else if (check_command(cmd_buffer, "EXIT")) {
+      printf("[debug] Exiting program with %sloaded file\n",
+             has_file ? "1 " : "no ");
       if (has_file) {
-        free_image_file(&current_file);
+        // free_image_file(&current_file);
+        printf("Freeing image file name %p\n", current_file.filename);
+        free(current_file.filename);
+
+        for (int i = 0; i < current_file.height; ++i) {
+          printf("Freeing image row: %p\n", current_file.mat[i]);
+          free(current_file.mat[i]);
+        }
+        printf("Freeing image matrix %p\n", current_file.mat);
+        free(current_file.mat);
       }
       return 0;
     }
