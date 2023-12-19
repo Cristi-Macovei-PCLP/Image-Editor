@@ -1,5 +1,5 @@
 EXE = image_editor
-FLAGS = -Wall -Wextra
+FLAGS = -lm -Wall -Wextra
 VAL_FLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 FILES = src/main.c src/defines.h src/cmd_utils.h src/cmd_utils.c src/file_utils.h src/file_utils.c src/histograms.h src/histograms.c src/crop.h src/crop.c src/equalize.h src/equalize.c src/math_utils.h src/math_utils.c src/apply_param.h src/apply_param.c src/rotate.h src/rotate.c

@@ -148,3 +148,22 @@ void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg) {
     p = strtok(NULL, " ");
   }
 }
+
+void get_rotate_cmd_args(char *cmd_buffer, int *ptr_angle) {
+  char *p = strtok(cmd_buffer, " ");
+  int arg_index = 0;
+
+  while (p) {
+    if (strlen(p) == 0) {
+      p = strtok(NULL, " ");
+      continue;
+    }
+
+    if (arg_index == 1) {
+      *ptr_angle = atoi(p);
+    }
+
+    ++arg_index;
+    p = strtok(NULL, " ");
+  }
+}
