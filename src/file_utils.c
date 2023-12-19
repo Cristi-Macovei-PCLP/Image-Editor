@@ -258,13 +258,14 @@ void save_image_binary(image_file_t *img_file, char *filename) {
 
     char *string_height = itoa(img_file->height);
     fwrite(string_height, strlen(string_height), 1, file);
+    // printf("Free string_height = '%s' (%p)\n", string_height, string_height);
     free(string_height);
 
     fwrite(&LF_CHAR, 1, 1, file);
 
     char *string_max_val = itoa(img_file->color_max_value);
     fwrite(string_max_val, strlen(string_max_val), 1, file);
-    free(string_height);
+    free(string_max_val);
 
     fwrite(&LF_CHAR, 1, 1, file);
 
