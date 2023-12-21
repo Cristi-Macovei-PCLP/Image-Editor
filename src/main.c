@@ -89,12 +89,22 @@ int main() {
 #endif
 
     else if (check_command(cmd_buffer, "SELECT")) {
-      // todo get data into another object and restore old object if invalid
-      get_select_cmd_args(cmd_buffer, &current_sel);
+      if (!has_file) {
+        fprintf(stderr, "No image loaded\n");
+        continue;
+      }
 
-      // todo check if selection is valid
+      selection_t new_sel;
+      int is_selection_valid =
+          get_select_cmd_args(cmd_buffer, &new_sel, &current_file);
 
-      has_sel = 1;
+      if (is_selection_valid) {
+        has_sel = 1;
+        current_sel = new_sel;
+      } else {
+        has_sel = 0;
+        printf("Invalid selection\n");
+      }
 
 #ifdef MODE_DEBUG
       fprintf(stderr, "[debug] Selected %d,%d --> %d,%d\n",

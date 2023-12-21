@@ -47,8 +47,8 @@ void get_load_cmd_arg(char *cmd_buffer, char **ptr_filename) {
   }
 }
 
-// todo make this return int
-void get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel) {
+int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
+                        image_file_t *img_file) {
   char *p = strtok(cmd_buffer, " ");
   int arg_index = 0;
   while (p) {
@@ -63,22 +63,50 @@ void get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel) {
     if (arg_index == 1) {
       if (strcmp(p, "ALL") == 0) {
         ptr_sel->is_all = 1;
-        return;
+
+        ptr_sel->top_left.line = ptr_sel->top_left.col = 0;
+        ptr_sel->bot_right.line = img_file->height;
+        ptr_sel->bot_right.col = img_file->width;
+        return 1;
       }
 
       ptr_sel->top_left.line = atoi(p);
+
+      if (ptr_sel->top_left.line < 0 ||
+          ptr_sel->top_left.line >= img_file->height) {
+        return 0;
+      }
+
     } else if (arg_index == 2) {
       ptr_sel->top_left.col = atoi(p);
+
+      if (ptr_sel->top_left.col < 0 ||
+          ptr_sel->top_left.col >= img_file->width) {
+        return 0;
+      }
     } else if (arg_index == 3) {
       ptr_sel->bot_right.line = atoi(p);
+
+      if (ptr_sel->bot_right.line < 0 ||
+          ptr_sel->bot_right.line >= img_file->height) {
+        return 0;
+      }
     } else if (arg_index == 4) {
       ptr_sel->bot_right.col = atoi(p);
+
+      if (ptr_sel->bot_right.col < 0 ||
+          ptr_sel->bot_right.col >= img_file->width) {
+        return 0;
+      }
     }
 
     ++arg_index;
     p = strtok(NULL, " ");
   }
   ptr_sel->is_all = 0;
+
+  // make sure it has all 4 arguments set
+  return arg_index >= 4;
 }
 
 // todo this also needs to return int
