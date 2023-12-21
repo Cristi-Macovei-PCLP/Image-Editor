@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +16,10 @@ int check_command(char *cmd_buffer, char *cmd_name) {
     if (cmd_buffer[i] != cmd_name[i]) {
       return 0;
     }
+  }
+
+  if (isalnum(cmd_buffer[strlen(cmd_name)])) {
+    return 0;
   }
 
   return 1;
@@ -52,8 +57,9 @@ void get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel) {
       continue;
     }
 
-    printf("p = '%s'\n", p);
-
+#ifdef MODE_DEBUG
+    fprintf(stderr, "[debug] select argument %d = '%s'\n", arg_index, p);
+#endif
     if (arg_index == 1) {
       if (strcmp(p, "ALL") == 0) {
         ptr_sel->is_all = 1;
@@ -61,7 +67,6 @@ void get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel) {
       }
 
       ptr_sel->top_left.line = atoi(p);
-      fprintf(stderr, "[debug] p = '%s'\n", p);
     } else if (arg_index == 2) {
       ptr_sel->top_left.col = atoi(p);
     } else if (arg_index == 3) {

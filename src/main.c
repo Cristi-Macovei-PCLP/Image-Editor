@@ -237,6 +237,9 @@ int main() {
         // free(current_file.mat);
       }
       return 0;
+    } else {
+      printf("Unknown command\n");
+      continue;
     }
   }
 
