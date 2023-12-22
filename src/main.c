@@ -22,8 +22,8 @@ int main() {
   int has_sel = 0;
   selection_t current_sel = {{0, 0}, {0, 0}, 0};
 
-  while (1) {
-    printf("> ");
+  while (!feof(stdin)) {
+    // printf("> ");
     fgets(cmd_buffer, CMD_BUFFER_SIZE * sizeof(char), stdin);
 
     // check if command length exceeded buffer size
@@ -45,7 +45,9 @@ int main() {
     if (check_command(cmd_buffer, "LOAD")) {
       // free loaded file if exists
       if (has_file) {
-        printf("Freeing existing file\n");
+#ifdef MODE_DEBUG
+        fprintf(stderr, "[debug] Freeing existing file\n");
+#endif
         free_image_file(&current_file);
       }
 
@@ -53,7 +55,7 @@ int main() {
       get_load_cmd_arg(cmd_buffer, &filename);
 
       if (!filename) {
-        fprintf(stderr, "[error] No filename for 'LOAD' found\n");
+        printf("No filename for 'LOAD' found\n");
         continue;
       }
 
@@ -64,7 +66,7 @@ int main() {
       FILE *file = fopen(filename, "rb");
 
       if (!file) {
-        fprintf(stderr, "Failed to load %s\n", filename);
+        printf("Failed to load %s\n", filename);
         has_file = 0;
         free(filename);
         continue;
@@ -76,9 +78,14 @@ int main() {
       if (!parse_image_file(file, &current_file)) {
         fprintf(stderr, "Failed to load %s\n", filename);
         has_file = 0;
+
         free_image_file(&current_file);
+        fclose(file);
+
+        continue;
       }
 
+      printf("Loaded %s\n", filename);
       fclose(file);
     }
 
@@ -220,33 +227,33 @@ int main() {
       get_save_cmd_args(cmd_buffer, &filename);
 
       if (!filename) {
-        fprintf(stderr, "No filename given\n");
+        printf("No filename given\n");
         continue;
       }
 
-      printf("Saving to %s\n", filename);
+#ifdef MODE_DEBUG
+      fprintf(stderr, "[debug] Saving to %s\n", filename);
+#endif
 
       save_image_binary(&current_file, filename);
+
+      printf("Saved %s\n", filename);
 
       free(filename);
     }
 
     else if (check_command(cmd_buffer, "EXIT")) {
+#ifdef MODE_DEBUG
       printf("[debug] Exiting program with %sloaded file\n",
              has_file ? "1 " : "no ");
+#endif
       if (has_file) {
         free_image_file(&current_file);
-        // printf("Freeing image file name %p\n", current_file.filename);
-        // free(current_file.filename);
-
-        // for (int i = 0; i < current_file.height; ++i) {
-        //   printf("Freeing image row: %p\n", current_file.mat[i]);
-        //   free(current_file.mat[i]);
-        // }
-        // printf("Freeing image matrix %p\n", current_file.mat);
-        // free(current_file.mat);
+        return 0;
+      } else {
+        printf("No image loaded\n");
+        continue;
       }
-      return 0;
     } else {
       printf("Unknown command\n");
       continue;

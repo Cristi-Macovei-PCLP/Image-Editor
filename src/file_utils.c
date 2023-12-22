@@ -323,155 +323,186 @@ char *itoa(int a) {
   return string;
 }
 
-// * tested only for P5 files, with max = 255
+void __save_color_image_binary(image_file_t *img_file, char *filename) {
+  FILE *file = fopen(filename, "wb");
+
+  char LF_CHAR = 0x0a;
+  char SPC_CHAR = ' ';
+
+  // write magic constants
+  fwrite("P6", 2, 1, file);
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  char *string_width = itoa(img_file->width);
+  fwrite(string_width, strlen(string_width), 1, file);
+  free(string_width);
+
+  fwrite(&SPC_CHAR, 1, 1, file);
+
+  char *string_height = itoa(img_file->height);
+  fwrite(string_height, strlen(string_height), 1, file);
+  // printf("Free string_height = '%s' (%p)\n", string_height, string_height);
+  free(string_height);
+
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  char *string_max_val = itoa(img_file->color_max_value);
+  fwrite(string_max_val, strlen(string_max_val), 1, file);
+  free(string_max_val);
+
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  for (int i = 0; i < img_file->height; ++i) {
+    for (int j = 0; j < img_file->width; ++j) {
+      // red
+      if (img_file->color_max_value <= 255) {
+        unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].red;
+        fwrite(&value, 1, 1, file);
+      } else {
+        unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].red;
+        unsigned char byte1 = value / 0xff;
+        unsigned char byte2 = value % 0xff;
+
+        fwrite(&byte1, 1, 1, file);
+        fwrite(&byte2, 1, 1, file);
+      }
+
+      // green
+      if (img_file->color_max_value <= 255) {
+        unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].green;
+        fwrite(&value, 1, 1, file);
+      } else {
+        unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].green;
+        unsigned char byte1 = value / 0xff;
+        unsigned char byte2 = value % 0xff;
+
+        fwrite(&byte1, 1, 1, file);
+        fwrite(&byte2, 1, 1, file);
+      }
+
+      // red
+      if (img_file->color_max_value <= 255) {
+        unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].blue;
+        fwrite(&value, 1, 1, file);
+      } else {
+        unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].blue;
+        unsigned char byte1 = value / 0xff;
+        unsigned char byte2 = value % 0xff;
+
+        fwrite(&byte1, 1, 1, file);
+        fwrite(&byte2, 1, 1, file);
+      }
+    }
+  }
+
+  fclose(file);
+}
+
+void __save_grayscale_image_binary(image_file_t *img_file, char *filename) {
+  FILE *file = fopen(filename, "wb");
+
+  char LF_CHAR = 0x0a;
+  char SPC_CHAR = ' ';
+
+  // write magic constants
+  fwrite("P5", 2, 1, file);
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  char *string_width = itoa(img_file->width);
+  fwrite(string_width, strlen(string_width), 1, file);
+  free(string_width);
+
+  fwrite(&SPC_CHAR, 1, 1, file);
+
+  char *string_height = itoa(img_file->height);
+  fwrite(string_height, strlen(string_height), 1, file);
+  free(string_height);
+
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  char *string_max_val = itoa(img_file->color_max_value);
+  fwrite(string_max_val, strlen(string_max_val), 1, file);
+  free(string_max_val);
+
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  for (int i = 0; i < img_file->height; ++i) {
+    for (int j = 0; j < img_file->width; ++j) {
+      if (img_file->color_max_value <= 255) {
+        unsigned char value = ((pgm_point_t **)img_file->mat)[i][j].grey;
+        fwrite(&value, 1, 1, file);
+      } else {
+        unsigned short value = ((pgm_point_t **)img_file->mat)[i][j].grey;
+        unsigned char byte1 = value / 0xff;
+        unsigned char byte2 = value % 0xff;
+
+        fwrite(&byte1, 1, 1, file);
+        fwrite(&byte2, 1, 1, file);
+      }
+    }
+  }
+
+  fclose(file);
+}
+
+void __save_black_white_image_binary(image_file_t *img_file, char *filename) {
+  FILE *file = fopen(filename, "wb");
+
+  char LF_CHAR = 0x0a;
+  char SPC_CHAR = ' ';
+
+  fwrite("P4", 2, 1, file);
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  char *string_width = itoa(img_file->width);
+  fwrite(string_width, strlen(string_width), 1, file);
+  free(string_width);
+
+  fwrite(&SPC_CHAR, 1, 1, file);
+
+  char *string_height = itoa(img_file->height);
+  fwrite(string_height, strlen(string_height), 1, file);
+  free(string_height);
+
+  fwrite(&LF_CHAR, 1, 1, file);
+
+  int num_points = img_file->width * img_file->height;
+  int c_line = 0, c_col = 0;
+  for (int i = 0; i < num_points; i += 8) {
+    unsigned char byte = 0;
+
+    for (int bit = 7; bit >= 0; --bit) {
+      int point_val = ((pgm_point_t **)img_file->mat)[c_line][c_col].grey;
+
+      if (point_val) {
+        byte |= (1 << bit);
+      }
+
+      ++c_col;
+      if (c_col >= img_file->width) {
+        c_col -= img_file->width;
+        ++c_line;
+      }
+    }
+
+    fwrite(&byte, 1, 1, file);
+  }
+
+  fclose(file);
+}
+
 void save_image_binary(image_file_t *img_file, char *filename) {
   FILE *file = fopen(filename, "wb");
   char LF_CHAR = 0x0a;
   char SPC_CHAR = ' ';
 
   if (img_file->type == IMAGE_GRAYSCALE) {
-    // write magic constants
-    fwrite("P5", 2, 1, file);
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    char *string_width = itoa(img_file->width);
-    fwrite(string_width, strlen(string_width), 1, file);
-    free(string_width);
-
-    fwrite(&SPC_CHAR, 1, 1, file);
-
-    char *string_height = itoa(img_file->height);
-    fwrite(string_height, strlen(string_height), 1, file);
-    free(string_height);
-
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    char *string_max_val = itoa(img_file->color_max_value);
-    fwrite(string_max_val, strlen(string_max_val), 1, file);
-    free(string_max_val);
-
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    for (int i = 0; i < img_file->height; ++i) {
-      for (int j = 0; j < img_file->width; ++j) {
-        if (img_file->color_max_value <= 255) {
-          unsigned char value = ((pgm_point_t **)img_file->mat)[i][j].grey;
-          fwrite(&value, 1, 1, file);
-        } else {
-          unsigned short value = ((pgm_point_t **)img_file->mat)[i][j].grey;
-          unsigned char byte1 = value / 0xff;
-          unsigned char byte2 = value % 0xff;
-
-          fwrite(&byte1, 1, 1, file);
-          fwrite(&byte2, 1, 1, file);
-        }
-      }
-    }
+    __save_grayscale_image_binary(img_file, filename);
   } else if (img_file->type == IMAGE_COLOR) {
-    // write magic constants
-    fwrite("P6", 2, 1, file);
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    char *string_width = itoa(img_file->width);
-    fwrite(string_width, strlen(string_width), 1, file);
-    free(string_width);
-
-    fwrite(&SPC_CHAR, 1, 1, file);
-
-    char *string_height = itoa(img_file->height);
-    fwrite(string_height, strlen(string_height), 1, file);
-    // printf("Free string_height = '%s' (%p)\n", string_height, string_height);
-    free(string_height);
-
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    char *string_max_val = itoa(img_file->color_max_value);
-    fwrite(string_max_val, strlen(string_max_val), 1, file);
-    free(string_max_val);
-
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    for (int i = 0; i < img_file->height; ++i) {
-      for (int j = 0; j < img_file->width; ++j) {
-        // red
-        if (img_file->color_max_value <= 255) {
-          unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].red;
-          fwrite(&value, 1, 1, file);
-        } else {
-          unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].red;
-          unsigned char byte1 = value / 0xff;
-          unsigned char byte2 = value % 0xff;
-
-          fwrite(&byte1, 1, 1, file);
-          fwrite(&byte2, 1, 1, file);
-        }
-
-        // green
-        if (img_file->color_max_value <= 255) {
-          unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].green;
-          fwrite(&value, 1, 1, file);
-        } else {
-          unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].green;
-          unsigned char byte1 = value / 0xff;
-          unsigned char byte2 = value % 0xff;
-
-          fwrite(&byte1, 1, 1, file);
-          fwrite(&byte2, 1, 1, file);
-        }
-
-        // red
-        if (img_file->color_max_value <= 255) {
-          unsigned char value = ((ppm_point_t **)img_file->mat)[i][j].blue;
-          fwrite(&value, 1, 1, file);
-        } else {
-          unsigned short value = ((ppm_point_t **)img_file->mat)[i][j].blue;
-          unsigned char byte1 = value / 0xff;
-          unsigned char byte2 = value % 0xff;
-
-          fwrite(&byte1, 1, 1, file);
-          fwrite(&byte2, 1, 1, file);
-        }
-      }
-    }
+    __save_color_image_binary(img_file, filename);
   } else if (img_file->type == IMAGE_BLACK_WHITE) {
-    fwrite("P4", 2, 1, file);
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    char *string_width = itoa(img_file->width);
-    fwrite(string_width, strlen(string_width), 1, file);
-    free(string_width);
-
-    fwrite(&SPC_CHAR, 1, 1, file);
-
-    char *string_height = itoa(img_file->height);
-    fwrite(string_height, strlen(string_height), 1, file);
-    free(string_height);
-
-    fwrite(&LF_CHAR, 1, 1, file);
-
-    int num_points = img_file->width * img_file->height;
-    int c_line = 0, c_col = 0;
-    for (int i = 0; i < num_points; i += 8) {
-      unsigned char byte = 0;
-
-      for (int bit = 7; bit >= 0; --bit) {
-        int point_val = ((pgm_point_t **)img_file->mat)[c_line][c_col].grey;
-
-        if (point_val) {
-          byte |= (1 << bit);
-        }
-
-        ++c_col;
-        if (c_col >= img_file->width) {
-          c_col -= img_file->width;
-          ++c_line;
-        }
-      }
-
-      fwrite(&byte, 1, 1, file);
-    }
+    __save_black_white_image_binary(img_file, filename);
   }
-  fclose(file);
 }
 
 void free_image_file(image_file_t *img_file) {
