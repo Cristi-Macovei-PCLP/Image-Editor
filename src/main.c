@@ -166,7 +166,7 @@ int main() {
         continue;
       }
 
-      if (current_file.type != IMAGE_TYPE_PGM) {
+      if (current_file.type != IMAGE_GRAYSCALE) {
         fprintf(stderr, "Black and white image needed\n");
         continue;
       }
@@ -183,7 +183,7 @@ int main() {
         continue;
       }
 
-      if (current_file.type == IMAGE_TYPE_PGM) {
+      if (current_file.type == IMAGE_GRAYSCALE) {
         fprintf(stderr, "Easy, Charlie Chaplin\n");
         continue;
       }
@@ -205,7 +205,7 @@ int main() {
         continue;
       }
 
-      if (current_file.type != IMAGE_TYPE_PGM) {
+      if (current_file.type != IMAGE_GRAYSCALE) {
         fprintf(stderr, "Black and white image needed\n");
         continue;
       }

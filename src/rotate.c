@@ -86,9 +86,9 @@ void __rotate_square_90_color(ppm_point_t **mat, int start_line, int start_col,
 
 void __rotate_square_90(void **mat, int start_line, int start_col, int n,
                         int type) {
-  if (type == IMAGE_TYPE_PGM) {
+  if (type == IMAGE_GRAYSCALE) {
     __rotate_square_90_grayscale((pgm_point_t **)mat, start_line, start_col, n);
-  } else {
+  } else if (type == IMAGE_COLOR) {
     __rotate_square_90_color((ppm_point_t **)mat, start_line, start_col, n);
   }
 }

@@ -1,7 +1,8 @@
 #define CMD_BUFFER_SIZE 1000
 
-#define IMAGE_TYPE_PPM 1
-#define IMAGE_TYPE_PGM 0
+#define IMAGE_GRAYSCALE 0
+#define IMAGE_COLOR 1
+#define IMAGE_BLACK_WHITE 2
 
 #define APPLY_PARAM_BAD 0
 #define APPLY_PARAM_EDGE 1

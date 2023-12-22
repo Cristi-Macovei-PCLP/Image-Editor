@@ -19,7 +19,7 @@ int crop_image(image_file_t *img_file, selection_t *sel) {
       int line = sel->top_left.line + i;
       int col = sel->top_left.col + j;
 
-      if (img_file->type == IMAGE_TYPE_PGM) {
+      if (img_file->type == IMAGE_GRAYSCALE) {
         ((pgm_point_t **)img_file->mat)[i][j].grey =
             ((pgm_point_t **)img_file->mat)[line][col].grey;
       } else {
