@@ -559,17 +559,36 @@ void __save_black_white_image_binary(image_file_t *img_file, char *filename) {
   fclose(file);
 }
 
-void save_image_binary(image_file_t *img_file, char *filename) {
-  FILE *file = fopen(filename, "wb");
-  char LF_CHAR = 0x0a;
-  char SPC_CHAR = ' ';
+void __save_grayscale_image_ascii(image_file_t *img_file, char *filename) {
+  FILE *file = fopen(filename, "w");
 
+  fprintf(file, "P2\n");
+  fprintf(file, "%d %d\n", img_file->width, img_file->height);
+  fprintf(file, "%d\n", img_file->color_max_value);
+
+  for (int i = 0; i < img_file->height; ++i) {
+    for (int j = 0; j < img_file->width; ++j) {
+      fprintf(file, "%d ", ((pgm_point_t **)img_file->mat)[i][j].grey);
+    }
+    fprintf(file, "\n");
+  }
+
+  fclose(file);
+}
+
+void save_image_binary(image_file_t *img_file, char *filename) {
   if (img_file->type == IMAGE_GRAYSCALE) {
     __save_grayscale_image_binary(img_file, filename);
   } else if (img_file->type == IMAGE_COLOR) {
     __save_color_image_binary(img_file, filename);
   } else if (img_file->type == IMAGE_BLACK_WHITE) {
     __save_black_white_image_binary(img_file, filename);
+  }
+}
+
+void save_image_ascii(image_file_t *img_file, char *filename) {
+  if (img_file->type == IMAGE_GRAYSCALE) {
+    __save_grayscale_image_ascii(img_file, filename);
   }
 }
 

@@ -224,7 +224,8 @@ int main() {
 
     else if (check_command(cmd_buffer, "SAVE")) {
       char *filename = NULL;
-      get_save_cmd_args(cmd_buffer, &filename);
+      int is_ascii = 0;
+      get_save_cmd_args(cmd_buffer, &filename, &is_ascii);
 
       if (!filename) {
         printf("No filename given\n");
@@ -235,8 +236,15 @@ int main() {
       fprintf(stderr, "[debug] Saving to %s\n", filename);
 #endif
 
-      save_image_binary(&current_file, filename);
+#ifdef MODE_DEBUG
+      fprintf(stderr, "[debug] Is ascii: %d\n", is_ascii);
+#endif
 
+      if (is_ascii) {
+        save_image_ascii(&current_file, filename);
+      } else {
+        save_image_binary(&current_file, filename);
+      }
       printf("Saved %s\n", filename);
 
       free(filename);

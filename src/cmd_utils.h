@@ -9,7 +9,8 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
 
 void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y);
 
-void get_save_cmd_args(char *cmd_buffer, char **ptr_filename);
+void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,
+                       int *ptr_is_ascii);
 
 void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg);
 

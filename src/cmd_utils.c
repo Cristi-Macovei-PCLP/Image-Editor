@@ -132,9 +132,12 @@ void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y) {
   }
 }
 
-void get_save_cmd_args(char *cmd_buffer, char **ptr_filename) {
+void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,
+                       int *ptr_is_ascii) {
   char *p = strtok(cmd_buffer, " ");
   int arg_index = 0;
+
+  *ptr_is_ascii = 0;
 
   while (p) {
     if (strlen(p) == 0) {
@@ -146,6 +149,10 @@ void get_save_cmd_args(char *cmd_buffer, char **ptr_filename) {
       char *filename = malloc((1 + strlen(p)) * sizeof(char));
       strcpy(filename, p);
       *ptr_filename = filename;
+    } else if (arg_index == 2) {
+      if (strcmp(p, "ascii") == 0) {
+        *ptr_is_ascii = 1;
+      }
     }
 
     ++arg_index;
