@@ -125,6 +125,14 @@ int main() {
               current_sel.top_left.line, current_sel.top_left.col,
               current_sel.bot_right.line, current_sel.bot_right.col);
 #endif
+
+      if (current_sel.is_all) {
+        printf("Selected ALL\n");
+      } else {
+        printf("Selected %d %d %d %d\n", current_sel.top_left.col,
+               current_sel.top_left.line, current_sel.bot_right.col,
+               current_sel.bot_right.line);
+      }
     }
 
     else if (check_command(cmd_buffer, "CROP")) {
@@ -140,7 +148,7 @@ int main() {
 
       crop_image(&current_file, &current_sel);
 
-      printf("Cropped image\n");
+      printf("Image cropped\n");
     }
 
     else if (check_command(cmd_buffer, "ROTATE")) {

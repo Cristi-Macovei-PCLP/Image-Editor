@@ -169,6 +169,24 @@ int parse_ascii_color_image(FILE *file, image_file_t *img_file) {
       fscanf(file, "%d", &(((ppm_point_t **)img_file->mat)[line][col].red));
       fscanf(file, "%d", &(((ppm_point_t **)img_file->mat)[line][col].green));
       fscanf(file, "%d", &(((ppm_point_t **)img_file->mat)[line][col].blue));
+
+#ifdef MODE_DEBUG
+      if (((ppm_point_t **)img_file->mat)[line][col].red >= 256 ||
+          ((ppm_point_t **)img_file->mat)[line][col].red < 0) {
+        fprintf(stderr, "[debug] Read invalid red for point %d %d\n", line,
+                col);
+      }
+      if (((ppm_point_t **)img_file->mat)[line][col].green >= 256 ||
+          ((ppm_point_t **)img_file->mat)[line][col].green < 0) {
+        fprintf(stderr, "[debug] Read invalid green for point %d %d\n", line,
+                col);
+      }
+      if (((ppm_point_t **)img_file->mat)[line][col].blue >= 256 ||
+          ((ppm_point_t **)img_file->mat)[line][col].blue < 0) {
+        fprintf(stderr, "[debug] Read invalid blue for point %d %d\n", line,
+                col);
+      }
+#endif
     }
   }
 
@@ -390,7 +408,7 @@ int parse_image_file(FILE *file, image_file_t *img_file) {
             "[debug] Magic constants for ASCII PPM image found (0x%x 0x%x)\n",
             magic[0], magic[1]);
 #endif
-    return parse_ascii_grayscale_image(file, img_file);
+    return parse_ascii_color_image(file, img_file);
   } else if (magic[0] == 'P' && magic[1] == '2') {
 #ifdef MODE_DEBUG
     fprintf(stderr,
@@ -613,6 +631,21 @@ void __save_color_image_ascii(image_file_t *img_file, char *filename) {
       fprintf(file, "%d ", ((ppm_point_t **)img_file->mat)[i][j].red);
       fprintf(file, "%d ", ((ppm_point_t **)img_file->mat)[i][j].green);
       fprintf(file, "%d ", ((ppm_point_t **)img_file->mat)[i][j].blue);
+
+#ifdef MODE_DEBUG
+      if (((ppm_point_t **)img_file->mat)[i][j].red >= 256 ||
+          ((ppm_point_t **)img_file->mat)[i][j].red < 0) {
+        fprintf(stderr, "[debug] Wrote invalid red for point %d %d\n", i, j);
+      }
+      if (((ppm_point_t **)img_file->mat)[i][j].green >= 256 ||
+          ((ppm_point_t **)img_file->mat)[i][j].green < 0) {
+        fprintf(stderr, "[debug] Wrote invalid green for point %d %d\n", i, j);
+      }
+      if (((ppm_point_t **)img_file->mat)[i][j].blue >= 256 ||
+          ((ppm_point_t **)img_file->mat)[i][j].blue < 0) {
+        fprintf(stderr, "[debug] Wrote invalid blue for point %d %d\n", i, j);
+      }
+#endif
     }
     fprintf(file, "\n");
   }
@@ -650,6 +683,8 @@ void save_image_binary(image_file_t *img_file, char *filename) {
 void save_image_ascii(image_file_t *img_file, char *filename) {
   if (img_file->type == IMAGE_GRAYSCALE) {
     __save_grayscale_image_ascii(img_file, filename);
+  } else if (img_file->type == IMAGE_COLOR) {
+    __save_color_image_ascii(img_file, filename);
   }
 }
 
