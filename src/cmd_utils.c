@@ -161,8 +161,7 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
   return 1;
 }
 
-// todo this also needs to return int
-void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y) {
+int get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y) {
   char *p = strtok(cmd_buffer, " ");
   int arg_index = 0;
   while (p) {
@@ -171,17 +170,25 @@ void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y) {
       continue;
     }
 
-    // printf("p = '%s'\n", p);
-
     if (arg_index == 1) {
+      if (!is_numerical_string(p)) {
+        return 0;
+      }
+
       *ptr_x = atoi(p);
     } else if (arg_index == 2) {
+      if (!is_numerical_string(p)) {
+        return 0;
+      }
+
       *ptr_y = atoi(p);
     }
 
     ++arg_index;
     p = strtok(NULL, " ");
   }
+
+  return arg_index == 3;
 }
 
 void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,

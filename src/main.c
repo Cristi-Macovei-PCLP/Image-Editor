@@ -199,13 +199,18 @@ int main() {
         continue;
       }
 
+      int x, y;
+      int is_valid = get_histogram_cmd_args(cmd_buffer, &x, &y);
+
+      if (is_valid == 0) {
+        printf("Invalid command\n");
+        continue;
+      }
+
       if (current_file.type != IMAGE_GRAYSCALE) {
         printf("Black and white image needed\n");
         continue;
       }
-
-      int x, y;
-      get_histogram_cmd_args(cmd_buffer, &x, &y);
 
       print_histogram(&current_file, x, y);
     }

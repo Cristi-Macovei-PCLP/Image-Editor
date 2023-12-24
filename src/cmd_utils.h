@@ -7,7 +7,7 @@ void get_load_cmd_arg(char *cmd_buffer, char **ptr_filename);
 int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
                         image_file_t *img_file);
 
-void get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y);
+int get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y);
 
 void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,
                        int *ptr_is_ascii);
