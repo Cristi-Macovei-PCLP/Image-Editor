@@ -24,7 +24,7 @@ runval: $(FILES)
 
 runval1: $(FILES)
 	make buildd
-	valgrind $(VAL_FLAGS) ./$(EXE) < tasks/image_editor/tests/13-image_editor/13-image_editor.in
+	valgrind $(VAL_FLAGS) ./$(EXE) < tasks/image_editor/tests/14-image_editor/14-image_editor.in
 
 clean:
 	rm -f image_editor

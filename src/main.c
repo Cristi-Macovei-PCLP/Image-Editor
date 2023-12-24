@@ -58,6 +58,7 @@ int main() {
 
       if (!filename) {
         printf("No filename for 'LOAD' found\n");
+        has_file = 0;
         if (filename) {
           free(filename);
         }
@@ -73,9 +74,7 @@ int main() {
       if (!file) {
         printf("Failed to load %s\n", filename);
         has_file = 0;
-        if (filename) {
-          free(filename);
-        }
+        free(filename);
         continue;
       }
 
@@ -83,7 +82,7 @@ int main() {
 
       has_file = 1;
       if (!parse_image_file(file, &current_file)) {
-        fprintf(stderr, "Failed to load %s\n", filename);
+        printf("Failed to load %s\n", filename);
         has_file = 0;
 
         free_image_file(&current_file);
@@ -252,6 +251,11 @@ int main() {
     }
 
     else if (check_command(cmd_buffer, "SAVE")) {
+      if (!has_file) {
+        printf("No image loaded\n");
+        continue;
+      }
+
       char *filename = NULL;
       int is_ascii = 0;
       get_save_cmd_args(cmd_buffer, &filename, &is_ascii);
@@ -286,11 +290,11 @@ int main() {
 #endif
       if (has_file) {
         free_image_file(&current_file);
-        return 0;
       } else {
         printf("No image loaded\n");
-        continue;
       }
+
+      return 0;
     } else {
       printf("Unknown command\n");
       continue;
