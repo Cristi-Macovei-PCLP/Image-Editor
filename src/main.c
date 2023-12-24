@@ -92,6 +92,15 @@ int main() {
       }
 
       printf("Loaded %s\n", filename);
+
+      // after image is loaded, automatically select all
+      has_sel = 1;
+      current_sel.is_all = 1;
+      current_sel.top_left.line = 0;
+      current_sel.top_left.col = 0;
+      current_sel.bot_right.line = current_file.height;
+      current_sel.bot_right.col = current_file.width;
+
       fclose(file);
     }
 

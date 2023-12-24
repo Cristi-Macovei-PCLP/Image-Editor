@@ -105,6 +105,23 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
   }
   ptr_sel->is_all = 0;
 
+  if (ptr_sel->top_left.line == ptr_sel->bot_right.line ||
+      ptr_sel->top_left.col == ptr_sel->bot_right.col) {
+    return 0;
+  }
+
+  if (ptr_sel->top_left.line > ptr_sel->bot_right.line) {
+    int tmp = ptr_sel->top_left.line;
+    ptr_sel->top_left.line = ptr_sel->bot_right.line;
+    ptr_sel->bot_right.line = tmp;
+  }
+
+  if (ptr_sel->top_left.col > ptr_sel->bot_right.col) {
+    int tmp = ptr_sel->top_left.col;
+    ptr_sel->top_left.col = ptr_sel->bot_right.col;
+    ptr_sel->bot_right.col = tmp;
+  }
+
   // make sure it has all 4 arguments set
   return arg_index >= 4;
 }
