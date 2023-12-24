@@ -173,11 +173,11 @@ void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg) {
     if (arg_index == 1) {
       if (strcmp(p, "EDGE") == 0) {
         *ptr_arg = APPLY_PARAM_EDGE;
-      } else if (strcmp(p, "SHARPEN")) {
+      } else if (strcmp(p, "SHARPEN") == 0) {
         *ptr_arg = APPLY_PARAM_SHARPEN;
-      } else if (strcmp(p, "BLUR")) {
+      } else if (strcmp(p, "BLUR") == 0) {
         *ptr_arg = APPLY_PARAM_BLUR;
-      } else if (strcmp(p, "GAUSSIAN_BLUR")) {
+      } else if (strcmp(p, "GAUSSIAN_BLUR") == 0) {
         *ptr_arg = APPLY_PARAM_GAUSSIAN_BLUR;
       } else {
         *ptr_arg = APPLY_PARAM_BAD;

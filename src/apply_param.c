@@ -60,8 +60,6 @@ double **__get_apply_mat(int param_type) {
 int apply_param(image_file_t *img_file, int param_type) {
   double **mat = __get_apply_mat(param_type);
 
-  printf("MERGE PANA AICI 1\n");
-
   ppm_point_t **copy = malloc(img_file->height * sizeof(ppm_point_t *));
   for (int i = 0; i < img_file->height; ++i) {
     copy[i] = malloc(img_file->width * sizeof(ppm_point_t));
@@ -101,14 +99,10 @@ int apply_param(image_file_t *img_file, int param_type) {
     copy[0][i].blue = copy[img_file->height - 1][i].blue = 0;
   }
 
-  printf("MERGE PANA AICI 2\n");
-
   for (int i = 0; i < img_file->height; ++i) {
     free(img_file->mat[i]);
   }
   free(img_file->mat);
-
-  printf("MERGE PANA AICI 3\n");
 
   img_file->mat = (void **)copy;
 

@@ -218,7 +218,21 @@ int main() {
         continue;
       }
 
+#ifdef MODE_DEBUG
+      fprintf(stderr, "[debug] Param type: %d\n", apply_param_type);
+#endif
+
       apply_param(&current_file, apply_param_type);
+
+      if (apply_param_type == APPLY_PARAM_EDGE) {
+        printf("APPLY EDGE done\n");
+      } else if (apply_param_type == APPLY_PARAM_SHARPEN) {
+        printf("APPLY SHARPEN done\n");
+      } else if (apply_param_type == APPLY_PARAM_BLUR) {
+        printf("APPLY BLUR done\n");
+      } else if (apply_param_type == APPLY_PARAM_GAUSSIAN_BLUR) {
+        printf("APPLY GAUSSIAN_BLUR done\n");
+      }
     }
 
     else if (check_command(cmd_buffer, "EQUALIZE")) {
