@@ -57,54 +57,93 @@ double **__get_apply_mat(int param_type) {
   return mat;
 }
 
-int apply_param(image_file_t *img_file, int param_type) {
-  double **mat = __get_apply_mat(param_type);
+int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
+  fprintf(stderr, "[debug] Selection %d %d --> %d %d\n", sel->top_left.line,
+          sel->top_left.col, sel->bot_right.line, sel->bot_right.col);
 
-  ppm_point_t **copy = malloc(img_file->height * sizeof(ppm_point_t *));
-  for (int i = 0; i < img_file->height; ++i) {
-    copy[i] = malloc(img_file->width * sizeof(ppm_point_t));
+  double **mat = __get_apply_mat(param_type);
+  int d9i[] = {-1, -1, 0, 1, 1, 1, 0, -1, 0};
+  int d9j[] = {0, 1, 1, 1, 0, -1, -1, -1, 0};
+
+  int sel_height = sel->bot_right.line - sel->top_left.line;
+  int sel_width = sel->bot_right.col - sel->top_left.col;
+
+  ppm_point_t **copy = malloc(sel_height * sizeof(ppm_point_t *));
+  for (int i = 0; i < sel_height; ++i) {
+    copy[i] = malloc(sel_width * sizeof(ppm_point_t));
   }
 
-  for (int i = 1; i < img_file->height - 1; ++i) {
-    for (int j = 1; j < img_file->width - 1; ++j) {
+  for (int i = sel->top_left.line; i < sel->bot_right.line; ++i) {
+    for (int j = sel->top_left.col; j < sel->bot_right.col; ++j) {
       double new_red = 0;
       double new_green = 0;
       double new_blue = 0;
-      for (int di = -1; di <= 1; ++di) {
-        for (int dj = -1; dj <= 1; ++dj) {
-          new_red += ((ppm_point_t **)img_file->mat)[i + di][j + dj].red *
+
+      fprintf(
+          stderr,
+          "[debug] For point %d %d of sel (%d %d of matrix), neighbours are:\n",
+          i - sel->top_left.line, j - sel->top_left.col, i, j);
+
+      for (int dir = 0; dir < 9; ++dir) {
+        int di = d9i[dir];
+        int dj = d9j[dir];
+
+        int new_i = i + di;
+        int new_j = j + dj;
+
+        if (0 <= new_i && new_i < img_file->height && 0 <= new_j &&
+            new_j < img_file->width) {
+
+          fprintf(stderr,
+                  "[debug] Neighbour #%d: (%d,%d) of mat, value = %d, matrix = "
+                  "%lf, total = %lf\n",
+                  dir, new_i, new_j,
+                  ((ppm_point_t **)img_file->mat)[new_i][new_j].red,
+                  mat[1 + di][1 + dj],
+                  ((ppm_point_t **)img_file->mat)[new_i][new_j].red *
+                      mat[1 + di][1 + dj]);
+          new_red += ((ppm_point_t **)img_file->mat)[new_i][new_j].red *
                      mat[1 + di][1 + dj];
-          new_green += ((ppm_point_t **)img_file->mat)[i + di][j + dj].green *
+          new_green += ((ppm_point_t **)img_file->mat)[new_i][new_j].green *
                        mat[1 + di][1 + dj];
-          new_blue += ((ppm_point_t **)img_file->mat)[i + di][j + dj].blue *
+          new_blue += ((ppm_point_t **)img_file->mat)[new_i][new_j].blue *
                       mat[1 + di][1 + dj];
+        } else {
+          fprintf(stderr, "broke\n");
+          new_red = ((ppm_point_t **)img_file->mat)[i][j].red;
+          new_green = ((ppm_point_t **)img_file->mat)[i][j].green;
+          new_blue = ((ppm_point_t **)img_file->mat)[i][j].blue;
+          break;
         }
       }
 
-      copy[i][j].red = clamp((int)new_red, 0, 255);
-      copy[i][j].green = clamp((int)new_green, 0, 255);
-      copy[i][j].blue = clamp((int)new_blue, 0, 255);
+      fprintf(stderr, "value at the end: %lf (clamped = %d)\n", new_red,
+              clamp((int)new_red, 0, 255));
+
+      copy[i - sel->top_left.line][j - sel->top_left.col].red =
+          clamp((int)new_red, 0, 255);
+      copy[i - sel->top_left.line][j - sel->top_left.col].green =
+          clamp((int)new_green, 0, 255);
+      copy[i - sel->top_left.line][j - sel->top_left.col].blue =
+          clamp((int)new_blue, 0, 255);
     }
   }
 
-  for (int i = 0; i < img_file->height; ++i) {
-    copy[i][0].red = copy[i][img_file->width - 1].red = 0;
-    copy[i][0].green = copy[i][img_file->width - 1].green = 0;
-    copy[i][0].blue = copy[i][img_file->width - 1].blue = 0;
+  for (int i = sel->top_left.line; i < sel->bot_right.line; ++i) {
+    for (int j = sel->top_left.col; j < sel->bot_right.col; ++j) {
+      ((ppm_point_t **)img_file->mat)[i][j].red =
+          copy[i - sel->top_left.line][j - sel->top_left.col].red;
+      ((ppm_point_t **)img_file->mat)[i][j].green =
+          copy[i - sel->top_left.line][j - sel->top_left.col].green;
+      ((ppm_point_t **)img_file->mat)[i][j].blue =
+          copy[i - sel->top_left.line][j - sel->top_left.col].blue;
+    }
   }
 
-  for (int i = 0; i < img_file->width; ++i) {
-    copy[0][i].red = copy[img_file->height - 1][i].red = 0;
-    copy[0][i].green = copy[img_file->height - 1][i].green = 0;
-    copy[0][i].blue = copy[img_file->height - 1][i].blue = 0;
+  for (int i = 0; i < sel_height; ++i) {
+    free(copy[i]);
   }
-
-  for (int i = 0; i < img_file->height; ++i) {
-    free(img_file->mat[i]);
-  }
-  free(img_file->mat);
-
-  img_file->mat = (void **)copy;
+  free(copy);
 
   for (int i = 0; i < 3; ++i) {
     free(mat[i]);

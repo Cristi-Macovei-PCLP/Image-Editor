@@ -225,7 +225,7 @@ int main() {
       get_apply_cmd_args(cmd_buffer, &apply_param_type);
 
       if (apply_param_type == APPLY_PARAM_BAD) {
-        printf("Invalid command\n");
+        printf("APPLY parameter invalid\n");
         continue;
       }
 
@@ -238,7 +238,7 @@ int main() {
         continue;
       }
 
-      apply_param(&current_file, apply_param_type);
+      apply_param(&current_file, &current_sel, apply_param_type);
 
       if (apply_param_type == APPLY_PARAM_EDGE) {
         printf("APPLY EDGE done\n");
@@ -313,7 +313,7 @@ int main() {
 
       return 0;
     } else {
-      printf("Unknown command\n");
+      printf("Invalid command\n");
       continue;
     }
   }
