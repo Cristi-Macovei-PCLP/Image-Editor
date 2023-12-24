@@ -17,13 +17,14 @@ void __read_one_point_data(FILE *file, int *ptr_data, int num_bytes) {
   unsigned char byte1;
   fread(&byte1, 1 * sizeof(char), 1, file);
 
-  // if there's comments
-  while (byte1 == '#') {
-    do {
-      fread(&byte1, 1 * sizeof(char), 1, file);
-    } while (byte1 != LF_CHAR);
-    fread(&byte1, 1 * sizeof(char), 1, file);
-  }
+  // todo fix this
+  // // if there's comments
+  // while (byte1 == '#') {
+  //   do {
+  //     fread(&byte1, 1 * sizeof(char), 1, file);
+  //   } while (byte1 != LF_CHAR);
+  //   fread(&byte1, 1 * sizeof(char), 1, file);
+  // }
 
   *ptr_data = (int)byte1;
 
@@ -213,6 +214,25 @@ int parse_grayscale_image(FILE *file, image_file_t *img_file) {
   return 1;
 }
 
+int parse_ascii_grayscale_image(FILE *file, image_file_t *img_file) {
+  img_file->type = IMAGE_GRAYSCALE;
+
+  fscanf(file, "%d", &img_file->width);
+  fscanf(file, "%d", &img_file->height);
+  fscanf(file, "%d", &img_file->color_max_value);
+
+  img_file->mat = malloc(img_file->height * sizeof(pgm_point_t *));
+  for (int line = 0; line < img_file->height; ++line) {
+    img_file->mat[line] = malloc(img_file->width * sizeof(pgm_point_t));
+
+    for (int col = 0; col < img_file->width; ++col) {
+      fscanf(file, "%d", &(((pgm_point_t **)img_file->mat)[line][col].grey));
+    }
+  }
+
+  return 1;
+}
+
 int parse_black_white_image(FILE *file, image_file_t *img_file) {
   img_file->type = IMAGE_BLACK_WHITE;
 
@@ -329,6 +349,13 @@ int parse_image_file(FILE *file, image_file_t *img_file) {
 #endif
 
     return parse_black_white_image(file, img_file);
+  } else if (magic[0] == 'P' && magic[1] == '2') {
+#ifdef MODE_DEBUG
+    fprintf(stderr,
+            "[debug] Magic constants for ASCII PGM image found (0x%x 0x%x)\n",
+            magic[0], magic[1]);
+#endif
+    return parse_ascii_grayscale_image(file, img_file);
   } else {
 #ifdef MODE_DEBUG
     fprintf(stderr, "[debug] Magic constants invalid, found 0x%x 0x%x\n",
