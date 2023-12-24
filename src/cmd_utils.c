@@ -70,32 +70,32 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
         return 1;
       }
 
-      ptr_sel->top_left.line = atoi(p);
-
-      if (ptr_sel->top_left.line < 0 ||
-          ptr_sel->top_left.line >= img_file->height) {
-        return 0;
-      }
-
-    } else if (arg_index == 2) {
       ptr_sel->top_left.col = atoi(p);
 
       if (ptr_sel->top_left.col < 0 ||
           ptr_sel->top_left.col >= img_file->width) {
         return 0;
       }
-    } else if (arg_index == 3) {
-      ptr_sel->bot_right.line = atoi(p);
+    } else if (arg_index == 2) {
 
-      if (ptr_sel->bot_right.line < 0 ||
-          ptr_sel->bot_right.line >= img_file->height) {
+      ptr_sel->top_left.line = atoi(p);
+
+      if (ptr_sel->top_left.line < 0 ||
+          ptr_sel->top_left.line >= img_file->height) {
         return 0;
       }
-    } else if (arg_index == 4) {
+    } else if (arg_index == 3) {
       ptr_sel->bot_right.col = atoi(p);
 
       if (ptr_sel->bot_right.col < 0 ||
-          ptr_sel->bot_right.col >= img_file->width) {
+          ptr_sel->bot_right.col > img_file->width) {
+        return 0;
+      }
+    } else if (arg_index == 4) {
+      ptr_sel->bot_right.line = atoi(p);
+
+      if (ptr_sel->bot_right.line < 0 ||
+          ptr_sel->bot_right.line > img_file->height) {
         return 0;
       }
     }

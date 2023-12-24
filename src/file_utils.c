@@ -221,6 +221,13 @@ int parse_ascii_grayscale_image(FILE *file, image_file_t *img_file) {
   fscanf(file, "%d", &img_file->height);
   fscanf(file, "%d", &img_file->color_max_value);
 
+#ifdef MODE_DEBUG
+  fprintf(stderr, "[debug] Read image width: %d\n", img_file->width);
+  fprintf(stderr, "[debug] Read image height: %d\n", img_file->height);
+  fprintf(stderr, "[debug] Read image max_color: %d\n",
+          img_file->color_max_value);
+#endif
+
   img_file->mat = malloc(img_file->height * sizeof(pgm_point_t *));
   for (int line = 0; line < img_file->height; ++line) {
     img_file->mat[line] = malloc(img_file->width * sizeof(pgm_point_t));
