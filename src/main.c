@@ -116,8 +116,8 @@ int main() {
         has_sel = 1;
         current_sel = new_sel;
       } else {
-        has_sel = 0;
-        printf("Invalid selection\n");
+        printf("Invalid set of coordinates\n");
+        continue;
       }
 
 #ifdef MODE_DEBUG
@@ -137,7 +137,7 @@ int main() {
 
     else if (check_command(cmd_buffer, "CROP")) {
       if (!has_file) {
-        fprintf(stderr, "No image loaded\n");
+        printf("No image loaded\n");
         continue;
       }
 
@@ -201,12 +201,7 @@ int main() {
 
     else if (check_command(cmd_buffer, "APPLY")) {
       if (!has_file) {
-        fprintf(stderr, "No image loaded\n");
-        continue;
-      }
-
-      if (current_file.type == IMAGE_GRAYSCALE) {
-        fprintf(stderr, "Easy, Charlie Chaplin\n");
+        printf("No image loaded\n");
         continue;
       }
 
@@ -214,13 +209,18 @@ int main() {
       get_apply_cmd_args(cmd_buffer, &apply_param_type);
 
       if (apply_param_type == APPLY_PARAM_BAD) {
-        fprintf(stderr, "APPLY parametru invalid");
+        printf("Invalid command\n");
         continue;
       }
 
 #ifdef MODE_DEBUG
       fprintf(stderr, "[debug] Param type: %d\n", apply_param_type);
 #endif
+
+      if (current_file.type == IMAGE_GRAYSCALE) {
+        fprintf(stderr, "Easy, Charlie Chaplin\n");
+        continue;
+      }
 
       apply_param(&current_file, apply_param_type);
 
