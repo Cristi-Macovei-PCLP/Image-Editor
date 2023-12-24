@@ -3,3 +3,16 @@ image_editor
 
 # vscode things
 .vscode
+
+# checker things
+Cargo.*
+*check*
+install.sh
+tests.json
+cs/
+input/
+output/
+ref/
+target/
+tasks/
+tests/

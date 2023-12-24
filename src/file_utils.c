@@ -12,14 +12,32 @@ int __is_empty_character(char c) {
 }
 
 void __read_one_point_data(FILE *file, int *ptr_data, int num_bytes) {
+  char LF_CHAR = 0x0a;
+
   unsigned char byte1;
   fread(&byte1, 1 * sizeof(char), 1, file);
+
+  // if there's comments
+  while (byte1 == '#') {
+    do {
+      fread(&byte1, 1 * sizeof(char), 1, file);
+    } while (byte1 != LF_CHAR);
+    fread(&byte1, 1 * sizeof(char), 1, file);
+  }
 
   *ptr_data = (int)byte1;
 
   if (num_bytes == 2) {
     unsigned char byte2;
     fread(&byte2, 1 * sizeof(char), 1, file);
+
+    // if there's comments
+    while (byte2 == '#') {
+      do {
+        fread(&byte2, 1 * sizeof(char), 1, file);
+      } while (byte2 != LF_CHAR);
+      fread(&byte2, 1 * sizeof(char), 1, file);
+    }
 
     *ptr_data = 0xff * (*ptr_data) + (int)byte2;
   }
@@ -36,10 +54,20 @@ void read_ppm_point(FILE *file, ppm_point_t *ptr_point, int num_bytes) {
 }
 
 int __read__decimal_number(FILE *file) {
+  char LF_CHAR = 0x0a;
+
   int ans = 0;
   while (!feof(file)) {
     char digit;
     fread(&digit, 1 * sizeof(char), 1, file);
+
+    // if there's comments
+    while (digit == '#') {
+      do {
+        fread(&digit, 1 * sizeof(char), 1, file);
+      } while (digit != LF_CHAR);
+      fread(&digit, 1 * sizeof(char), 1, file);
+    }
 
     if (digit < '0' || digit > '9') {
       break;
@@ -219,6 +247,8 @@ int parse_black_white_image(FILE *file, image_file_t *img_file) {
     img_file->height = height;
   }
 
+  img_file->color_max_value = 255;
+
 #ifdef MODE_DEBUG
   fprintf(stderr, "[debug] Read image height: %d\n", height);
 #endif
@@ -234,12 +264,23 @@ int parse_black_white_image(FILE *file, image_file_t *img_file) {
     unsigned char byte;
     fread(&byte, 1, 1, file);
 
+    // printf("Byte before = %x  ", byte);
+
+    while (byte == '#') {
+      do {
+        fread(&byte, 1 * sizeof(char), 1, file);
+      } while (byte != 0x0a);
+      fread(&byte, 1 * sizeof(char), 1, file);
+    }
+
+    // printf("Byte after = %x\n", byte);
+
     for (int bit = 7; bit >= 0; --bit) {
       int value = byte & (1 << bit);
 
       int point_val = 0;
       if (value) {
-        point_val = 255;
+        point_val = 1;
       }
 
       ((pgm_point_t **)img_file->mat)[c_line][c_col].grey = point_val;
