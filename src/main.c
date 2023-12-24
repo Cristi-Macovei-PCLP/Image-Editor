@@ -120,11 +120,14 @@ int main() {
       int is_selection_valid =
           get_select_cmd_args(cmd_buffer, &new_sel, &current_file);
 
-      if (is_selection_valid) {
+      if (is_selection_valid == 1) {
         has_sel = 1;
         current_sel = new_sel;
-      } else {
+      } else if (is_selection_valid == 0) {
         printf("Invalid set of coordinates\n");
+        continue;
+      } else {
+        printf("Invalid command\n");
         continue;
       }
 

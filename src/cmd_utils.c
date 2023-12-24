@@ -47,6 +47,26 @@ void get_load_cmd_arg(char *cmd_buffer, char **ptr_filename) {
   }
 }
 
+int is_numerical_string(char *string) {
+  int n = strlen(string);
+
+  if (string[0] != '-' && !isdigit(string[0])) {
+    return 0;
+  }
+
+  for (int i = 1; i < n; ++i) {
+    if (!isdigit(string[i])) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+// returns
+// 0 if coordinates are invalid
+// 1 if everything is fine
+// 2 if there's not 4 numerical coordinates
 int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
                         image_file_t *img_file) {
   char *p = strtok(cmd_buffer, " ");
@@ -70,6 +90,10 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
         return 1;
       }
 
+      if (!is_numerical_string(p)) {
+        return 2;
+      }
+
       ptr_sel->top_left.col = atoi(p);
 
       if (ptr_sel->top_left.col < 0 ||
@@ -77,7 +101,9 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
         return 0;
       }
     } else if (arg_index == 2) {
-
+      if (!is_numerical_string(p)) {
+        return 2;
+      }
       ptr_sel->top_left.line = atoi(p);
 
       if (ptr_sel->top_left.line < 0 ||
@@ -85,6 +111,9 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
         return 0;
       }
     } else if (arg_index == 3) {
+      if (!is_numerical_string(p)) {
+        return 2;
+      }
       ptr_sel->bot_right.col = atoi(p);
 
       if (ptr_sel->bot_right.col < 0 ||
@@ -92,6 +121,9 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
         return 0;
       }
     } else if (arg_index == 4) {
+      if (!is_numerical_string(p)) {
+        return 2;
+      }
       ptr_sel->bot_right.line = atoi(p);
 
       if (ptr_sel->bot_right.line < 0 ||
@@ -103,8 +135,12 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
     ++arg_index;
     p = strtok(NULL, " ");
   }
-  ptr_sel->is_all = 0;
 
+  if (arg_index <= 4) {
+    return 2;
+  }
+
+  ptr_sel->is_all = 0;
   if (ptr_sel->top_left.line == ptr_sel->bot_right.line ||
       ptr_sel->top_left.col == ptr_sel->bot_right.col) {
     return 0;
@@ -122,8 +158,7 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
     ptr_sel->bot_right.col = tmp;
   }
 
-  // make sure it has all 4 arguments set
-  return arg_index >= 4;
+  return 1;
 }
 
 // todo this also needs to return int
