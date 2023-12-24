@@ -103,7 +103,7 @@ int main() {
 
     else if (check_command(cmd_buffer, "SELECT")) {
       if (!has_file) {
-        fprintf(stderr, "No image loaded\n");
+        printf("No image loaded\n");
         continue;
       }
 
@@ -160,12 +160,12 @@ int main() {
 
       if (abs(angle) != 90 && abs(angle) != 180 && abs(angle) != 270 &&
           abs(angle) != 360) {
-        fprintf(stderr, "Unsupported rotation angle\n");
+        printf("Unsupported rotation angle\n");
         continue;
       }
 
       if (!has_file) {
-        fprintf(stderr, "No image loaded\n");
+        printf("No image loaded\n");
         continue;
       }
 
@@ -183,12 +183,12 @@ int main() {
 
     else if (check_command(cmd_buffer, "HISTOGRAM")) {
       if (!has_file) {
-        fprintf(stderr, "No image loaded\n");
+        printf("No image loaded\n");
         continue;
       }
 
       if (current_file.type != IMAGE_GRAYSCALE) {
-        fprintf(stderr, "Black and white image needed\n");
+        printf("Black and white image needed\n");
         continue;
       }
 
@@ -217,7 +217,7 @@ int main() {
 #endif
 
       if (current_file.type == IMAGE_GRAYSCALE) {
-        fprintf(stderr, "Easy, Charlie Chaplin\n");
+        printf("Easy, Charlie Chaplin\n");
         continue;
       }
 
@@ -236,18 +236,18 @@ int main() {
 
     else if (check_command(cmd_buffer, "EQUALIZE")) {
       if (!has_file) {
-        fprintf(stderr, "No image loaded\n");
+        printf("No image loaded\n");
         continue;
       }
 
       if (current_file.type != IMAGE_GRAYSCALE) {
-        fprintf(stderr, "Black and white image needed\n");
+        printf("Black and white image needed\n");
         continue;
       }
 
       equalize_image(&current_file);
 
-      printf("Equalization done\n");
+      printf("Equalize done\n");
     }
 
     else if (check_command(cmd_buffer, "SAVE")) {
