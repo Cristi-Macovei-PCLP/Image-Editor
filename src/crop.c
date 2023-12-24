@@ -6,6 +6,19 @@
 
 // ! vezi ca n ai testat asta
 int crop_image(image_file_t *img_file, selection_t *sel) {
+  if (sel->top_left.line < 0 || sel->top_left.line >= img_file->height) {
+    return 0;
+  }
+  if (sel->top_left.col < 0 || sel->top_left.col >= img_file->width) {
+    return 0;
+  }
+  if (sel->top_left.line < 0 || sel->top_left.line >= img_file->height) {
+    return 0;
+  }
+  if (sel->top_left.col < 0 || sel->top_left.col >= img_file->width) {
+    return 0;
+  }
+
   int new_width = sel->bot_right.col - sel->top_left.col;
   int new_height = sel->bot_right.line - sel->top_left.line;
 

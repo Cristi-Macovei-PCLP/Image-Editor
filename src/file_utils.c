@@ -147,6 +147,34 @@ int parse_color_image(FILE *file, image_file_t *img_file) {
   return 1;
 }
 
+int parse_ascii_color_image(FILE *file, image_file_t *img_file) {
+  img_file->type = IMAGE_COLOR;
+
+  fscanf(file, "%d", &img_file->width);
+  fscanf(file, "%d", &img_file->height);
+  fscanf(file, "%d", &img_file->color_max_value);
+
+#ifdef MODE_DEBUG
+  fprintf(stderr, "[debug] Read image width: %d\n", img_file->width);
+  fprintf(stderr, "[debug] Read image height: %d\n", img_file->height);
+  fprintf(stderr, "[debug] Read image max_color: %d\n",
+          img_file->color_max_value);
+#endif
+
+  img_file->mat = malloc(img_file->height * sizeof(ppm_point_t *));
+  for (int line = 0; line < img_file->height; ++line) {
+    img_file->mat[line] = malloc(img_file->width * sizeof(ppm_point_t));
+
+    for (int col = 0; col < img_file->width; ++col) {
+      fscanf(file, "%d", &(((ppm_point_t **)img_file->mat)[line][col].red));
+      fscanf(file, "%d", &(((ppm_point_t **)img_file->mat)[line][col].green));
+      fscanf(file, "%d", &(((ppm_point_t **)img_file->mat)[line][col].blue));
+    }
+  }
+
+  return 1;
+}
+
 int parse_grayscale_image(FILE *file, image_file_t *img_file) {
   img_file->type = IMAGE_GRAYSCALE;
 
@@ -356,6 +384,13 @@ int parse_image_file(FILE *file, image_file_t *img_file) {
 #endif
 
     return parse_black_white_image(file, img_file);
+  } else if (magic[0] == 'P' && magic[1] == '3') {
+#ifdef MODE_DEBUG
+    fprintf(stderr,
+            "[debug] Magic constants for ASCII PPM image found (0x%x 0x%x)\n",
+            magic[0], magic[1]);
+#endif
+    return parse_ascii_grayscale_image(file, img_file);
   } else if (magic[0] == 'P' && magic[1] == '2') {
 #ifdef MODE_DEBUG
     fprintf(stderr,
@@ -561,6 +596,25 @@ void __save_black_white_image_binary(image_file_t *img_file, char *filename) {
     }
 
     fwrite(&byte, 1, 1, file);
+  }
+
+  fclose(file);
+}
+
+void __save_color_image_ascii(image_file_t *img_file, char *filename) {
+  FILE *file = fopen(filename, "w");
+
+  fprintf(file, "P3\n");
+  fprintf(file, "%d %d\n", img_file->width, img_file->height);
+  fprintf(file, "%d\n", img_file->color_max_value);
+
+  for (int i = 0; i < img_file->height; ++i) {
+    for (int j = 0; j < img_file->width; ++j) {
+      fprintf(file, "%d ", ((ppm_point_t **)img_file->mat)[i][j].red);
+      fprintf(file, "%d ", ((ppm_point_t **)img_file->mat)[i][j].green);
+      fprintf(file, "%d ", ((ppm_point_t **)img_file->mat)[i][j].blue);
+    }
+    fprintf(file, "\n");
   }
 
   fclose(file);

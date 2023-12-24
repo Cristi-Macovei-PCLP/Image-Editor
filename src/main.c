@@ -28,14 +28,16 @@ int main() {
 
     // check if command length exceeded buffer size
     // ( this should never happen )
-    if (cmd_buffer[strlen(cmd_buffer) - 1] != '\n') {
-      fprintf(stderr,
-              "[error] Command length too long, has to be <= 1000 chars\n");
-      continue;
-    }
+    // if (cmd_buffer[strlen(cmd_buffer) - 1] != '\n') {
+    //   fprintf(stderr,
+    //           "[error] Command length too long, has to be <= 1000 chars\n");
+    //   continue;
+    // }
 
     // remove trailing '\n'
-    cmd_buffer[strlen(cmd_buffer) - 1] = '\0';
+    if (cmd_buffer[strlen(cmd_buffer) - 1] == '\n') {
+      cmd_buffer[strlen(cmd_buffer) - 1] = '\0';
+    }
 
 #ifdef MODE_DEBUG
     fprintf(stderr, "[debug] Command: '%s'\n", cmd_buffer);
@@ -56,6 +58,9 @@ int main() {
 
       if (!filename) {
         printf("No filename for 'LOAD' found\n");
+        if (filename) {
+          free(filename);
+        }
         continue;
       }
 
@@ -68,7 +73,9 @@ int main() {
       if (!file) {
         printf("Failed to load %s\n", filename);
         has_file = 0;
-        free(filename);
+        if (filename) {
+          free(filename);
+        }
         continue;
       }
 
