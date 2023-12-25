@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -58,8 +59,10 @@ double **__get_apply_mat(int param_type) {
 }
 
 int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
+#ifdef MODE_DEBUG
   fprintf(stderr, "[debug] Selection %d %d --> %d %d\n", sel->top_left.line,
           sel->top_left.col, sel->bot_right.line, sel->bot_right.col);
+#endif
 
   double **mat = __get_apply_mat(param_type);
   int d9i[] = {-1, -1, 0, 1, 1, 1, 0, -1, 0};
@@ -79,10 +82,12 @@ int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
       double new_green = 0;
       double new_blue = 0;
 
+#ifdef MODE_DEBUG
       fprintf(
           stderr,
           "[debug] For point %d %d of sel (%d %d of matrix), neighbours are:\n",
           i - sel->top_left.line, j - sel->top_left.col, i, j);
+#endif
 
       for (int dir = 0; dir < 9; ++dir) {
         int di = d9i[dir];
@@ -93,7 +98,7 @@ int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
 
         if (0 <= new_i && new_i < img_file->height && 0 <= new_j &&
             new_j < img_file->width) {
-
+#ifdef MODE_DEBUG
           fprintf(stderr,
                   "[debug] Neighbour #%d: (%d,%d) of mat, value = %d, matrix = "
                   "%lf, total = %lf\n",
@@ -102,6 +107,7 @@ int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
                   mat[1 + di][1 + dj],
                   ((ppm_point_t **)img_file->mat)[new_i][new_j].red *
                       mat[1 + di][1 + dj]);
+#endif
           new_red += ((ppm_point_t **)img_file->mat)[new_i][new_j].red *
                      mat[1 + di][1 + dj];
           new_green += ((ppm_point_t **)img_file->mat)[new_i][new_j].green *
@@ -109,7 +115,9 @@ int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
           new_blue += ((ppm_point_t **)img_file->mat)[new_i][new_j].blue *
                       mat[1 + di][1 + dj];
         } else {
+#ifdef MODE_DEBUG
           fprintf(stderr, "broke\n");
+#endif
           new_red = ((ppm_point_t **)img_file->mat)[i][j].red;
           new_green = ((ppm_point_t **)img_file->mat)[i][j].green;
           new_blue = ((ppm_point_t **)img_file->mat)[i][j].blue;
@@ -117,15 +125,17 @@ int apply_param(image_file_t *img_file, selection_t *sel, int param_type) {
         }
       }
 
+#ifdef MODE_DEBUG
       fprintf(stderr, "value at the end: %lf (clamped = %d)\n", new_red,
-              clamp((int)new_red, 0, 255));
+              clamp(round(new_red), 0, 255));
+#endif
 
       copy[i - sel->top_left.line][j - sel->top_left.col].red =
-          clamp((int)new_red, 0, 255);
+          clamp(round(new_red), 0, 255);
       copy[i - sel->top_left.line][j - sel->top_left.col].green =
-          clamp((int)new_green, 0, 255);
+          clamp(round(new_green), 0, 255);
       copy[i - sel->top_left.line][j - sel->top_left.col].blue =
-          clamp((int)new_blue, 0, 255);
+          clamp(round(new_blue), 0, 255);
     }
   }
 

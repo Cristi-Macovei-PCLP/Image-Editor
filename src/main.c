@@ -159,6 +159,12 @@ int main() {
 
       crop_image(&current_file, &current_sel);
 
+      current_sel.is_all = 1;
+      current_sel.top_left.line = 0;
+      current_sel.top_left.col = 0;
+      current_sel.bot_right.line = current_file.height;
+      current_sel.bot_right.col = current_file.width;
+
       printf("Image cropped\n");
     }
 
