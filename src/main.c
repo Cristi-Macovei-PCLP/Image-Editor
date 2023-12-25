@@ -221,8 +221,13 @@ int main() {
         continue;
       }
 
-      int apply_param_type = APPLY_PARAM_BAD;
+      int apply_param_type = APPLY_PARAM_NON_EXISTENT;
       get_apply_cmd_args(cmd_buffer, &apply_param_type);
+
+      if (apply_param_type == APPLY_PARAM_NON_EXISTENT) {
+        printf("Invalid command\n");
+        continue;
+      }
 
       if (apply_param_type == APPLY_PARAM_BAD) {
         printf("APPLY parameter invalid\n");
