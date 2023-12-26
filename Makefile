@@ -18,6 +18,10 @@ rund: $(FILES)
 	make buildd
 	./$(EXE)
 
+rund1:
+	make buildd
+	./$(EXE) < tasks/image_editor/tests/27-image_editor/27-image_editor.in 2>debug.log
+
 runval: $(FILES)
 	make buildd
 	valgrind $(VAL_FLAGS) ./$(EXE)

@@ -20,16 +20,19 @@ void print_histogram(image_file_t *img_file, int stars, int bins) {
     freq[i] = 0;
   }
 
-  // max_value .... bins-1
-  // point_val .... x
-  // x = point_val * (bins - 1) / max_value
+  int num_values_per_bin = (1 + img_file->color_max_value) / bins;
 
   for (int i = 0; i < img_file->height; ++i) {
     for (int j = 0; j < img_file->width; ++j) {
       int grayscale_point = ((pgm_point_t **)(img_file->mat))[i][j].grey;
 
-      int bin = grayscale_point * (bins - 1) / img_file->color_max_value;
+      int bin = grayscale_point / num_values_per_bin;
       ++freq[bin];
+
+#ifdef MODE_DEBUG
+      fprintf(stderr, "Grayscale point %d falls into bin %d\n", grayscale_point,
+              bin);
+#endif
     }
   }
 
@@ -44,9 +47,9 @@ void print_histogram(image_file_t *img_file, int stars, int bins) {
   // freq     ... x
   // x = freq * stars / max_freq
   for (int bin = 0; bin < bins; ++bin) {
-    printf("%d\t|\t", bin);
-
     int num_stars = freq[bin] * stars / max_freq;
+
+    printf("%d\t|\t", num_stars);
     for (int i = 0; i < num_stars; ++i) {
       printf("*");
     }
