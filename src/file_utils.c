@@ -376,7 +376,6 @@ int parse_black_white_image(FILE *file, image_file_t *img_file) {
 
 int parse_image_file(FILE *file, image_file_t *img_file) {
   char magic[2];
-  char empty;
 
   // read magic numbers
   fread(magic, 2 * sizeof(char), 1, file);

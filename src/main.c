@@ -107,6 +107,11 @@ int main() {
 #ifdef MODE_DEBUG
     else if (check_command(cmd_buffer, "SHOW")) {
       fprintf(stderr, "[debug] Loaded filename: %s\n", current_file.filename);
+      fprintf(stderr, "[debug] Image size: h = %d, w = %d\n",
+              current_file.height, current_file.width);
+      fprintf(stderr, "[debug] Current selection: %d, %d --> %d, %d\n",
+              current_sel.top_left.line, current_sel.top_left.col,
+              current_sel.bot_right.line, current_sel.bot_right.col);
     }
 #endif
 
@@ -176,8 +181,8 @@ int main() {
       fprintf(stderr, "[debug] Rotate angle = %d\n", angle);
 #endif
 
-      if (abs(angle) != 90 && abs(angle) != 180 && abs(angle) != 270 &&
-          abs(angle) != 360) {
+      if (abs(angle) != 0 && abs(angle) != 90 && abs(angle) != 180 &&
+          abs(angle) != 270 && abs(angle) != 360) {
         printf("Unsupported rotation angle\n");
         continue;
       }
@@ -193,10 +198,12 @@ int main() {
       }
 
       if (current_sel.is_all) {
-        rotate_all(&current_file, angle);
+        rotate_all(&current_file, &current_sel, angle);
       } else {
         rotate_square(&current_file, &current_sel, angle);
       }
+
+      printf("Rotated %d\n", angle);
     }
 
     else if (check_command(cmd_buffer, "HISTOGRAM")) {
