@@ -197,7 +197,10 @@ int main() {
         continue;
       }
 
-      if (current_sel.is_all) {
+      if (current_sel.is_all ||
+          (current_sel.top_left.line == 0 && current_sel.top_left.col == 0 &&
+           current_sel.bot_right.line == current_file.height &&
+           current_sel.bot_right.col == current_file.width)) {
         rotate_all(&current_file, &current_sel, angle);
       } else {
         rotate_square(&current_file, &current_sel, angle);

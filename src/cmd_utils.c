@@ -71,6 +71,7 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
                         image_file_t *img_file) {
   char *p = strtok(cmd_buffer, " ");
   int arg_index = 0;
+  ptr_sel->is_all = 0;
   while (p) {
     if (strlen(p) == 0) {
       p = strtok(NULL, " ");
@@ -157,6 +158,12 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
     ptr_sel->top_left.col = ptr_sel->bot_right.col;
     ptr_sel->bot_right.col = tmp;
   }
+
+  // if (ptr_sel->top_left.line == 0 && ptr_sel->top_left.col == 0 &&
+  //     ptr_sel->bot_right.line == img_file->height &&
+  //     ptr_sel->bot_right.col == img_file->width) {
+  //   ptr_sel->is_all = 1;
+  // }
 
   return 1;
 }
