@@ -1,0 +1,15 @@
+==24657== Memcheck, a memory error detector
+==24657== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==24657== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==24657== Command: ./image_editor
+==24657== Parent PID: 24639
+==24657== 
+==24657== 
+==24657== HEAP SUMMARY:
+==24657==     in use at exit: 0 bytes in 0 blocks
+==24657==   total heap usage: 5,336 allocs, 5,336 frees, 18,884,766 bytes allocated
+==24657== 
+==24657== All heap blocks were freed -- no leaks are possible
+==24657== 
+==24657== For lists of detected and suppressed errors, rerun with: -s
+==24657== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
