@@ -1,15 +1,15 @@
-==25589== Memcheck, a memory error detector
-==25589== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==25589== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==25589== Command: ./image_editor
-==25589== Parent PID: 24639
-==25589== 
-==25589== 
-==25589== HEAP SUMMARY:
-==25589==     in use at exit: 0 bytes in 0 blocks
-==25589==   total heap usage: 2,966 allocs, 2,966 frees, 13,928,732 bytes allocated
-==25589== 
-==25589== All heap blocks were freed -- no leaks are possible
-==25589== 
-==25589== For lists of detected and suppressed errors, rerun with: -s
-==25589== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25657== Memcheck, a memory error detector
+==25657== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25657== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==25657== Command: ./image_editor
+==25657== Parent PID: 22213
+==25657== 
+==25657== 
+==25657== HEAP SUMMARY:
+==25657==     in use at exit: 0 bytes in 0 blocks
+==25657==   total heap usage: 2,966 allocs, 2,966 frees, 13,928,732 bytes allocated
+==25657== 
+==25657== All heap blocks were freed -- no leaks are possible
+==25657== 
+==25657== For lists of detected and suppressed errors, rerun with: -s
+==25657== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

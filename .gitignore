@@ -16,3 +16,7 @@ ref/
 target/
 tasks/
 tests/
+
+# packed
+zip/
+*.zip
