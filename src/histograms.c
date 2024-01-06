@@ -3,19 +3,18 @@
 
 #include "structs.h"
 
-// todo vezi ca nu merge panarama
 // has to be a power of 2 between 2 and 256
 int check_histogram_bin_value(int val)
 {
-	return 2 <= val && val <= 256 && ((val - 1) ^ (~val)) == 0;
+	return 2 <= val && val <= 256 && ((val - 1) & val) == 0;
 }
 
 void print_histogram(image_file_t *img_file, int stars, int bins)
 {
-	// if (!check_histogram_bin_value(bins)) {
-	//   fprintf(stderr, "Invalid bin value '%d'\n", bins);
-	//   return;
-	// }
+	if (!check_histogram_bin_value(bins)) {
+		fprintf(stderr, "Invalid bin value '%d'\n", bins);
+		return;
+	}
 
 	int *freq = malloc(bins * sizeof(int));
 	for (int i = 0; i < bins; ++i)
