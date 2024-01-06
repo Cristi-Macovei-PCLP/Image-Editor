@@ -1,3 +1,6 @@
+// Macovei Nicolae-Cristian
+// Anul I, grupa 312CAb
+
 #include "structs.h"
 
 int check_command(char *cmd_buffer, char *cmd_name);

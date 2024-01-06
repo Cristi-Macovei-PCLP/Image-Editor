@@ -1,5 +1,9 @@
+// Macovei Nicolae-Cristian
+// Anul I, grupa 312CAb
+
 // this thing is needed for the preprocessor to not write this header multiple
 // times and throw an error because structures are being re-defined
+// this does the same job as guards, but i like pragma more
 #pragma once
 
 typedef struct ppm_point {

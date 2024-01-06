@@ -1,3 +1,6 @@
+// Macovei Nicolae-Cristian
+// Anul I, grupa 312CAb
+
 #define CMD_BUFFER_SIZE 1000
 
 #define IMAGE_GRAYSCALE 0
