@@ -42,6 +42,7 @@ void read_ppm_point(FILE *file, ppm_point_t *ptr_point, int num_bytes)
 	__read_one_point_data(file, &ptr_point->blue, num_bytes);
 }
 
+// aceasta functie citeste un numar zecimal dintr-un fisier binar
 int __read__decimal_number(FILE *file)
 {
 	char LF_CHAR = 0x0a;
@@ -68,6 +69,7 @@ int __read__decimal_number(FILE *file)
 	return ans;
 }
 
+// aceasta functie citeste datele unei imagini color dintr-un fisier binar
 int parse_color_image(FILE *file, image_file_t *img_file)
 {
 	img_file->type = IMAGE_COLOR;
@@ -135,6 +137,7 @@ int parse_color_image(FILE *file, image_file_t *img_file)
 	return 1;
 }
 
+// aceasta functie citeste datele unei imagini color dintr-un fisier ascii
 int parse_ascii_color_image(FILE *file, image_file_t *img_file)
 {
 	img_file->type = IMAGE_COLOR;
@@ -185,6 +188,7 @@ int parse_ascii_color_image(FILE *file, image_file_t *img_file)
 	return 1;
 }
 
+// aceasta functie citeste datele unei imagini grayscale dintr-un fisier binar
 int parse_grayscale_image(FILE *file, image_file_t *img_file)
 {
 	img_file->type = IMAGE_GRAYSCALE;
@@ -252,6 +256,7 @@ int parse_grayscale_image(FILE *file, image_file_t *img_file)
 	return 1;
 }
 
+// aceasta functie citeste datele unei imagini grayscale dintr-un fisier ascii
 int parse_ascii_grayscale_image(FILE *file, image_file_t *img_file)
 {
 	img_file->type = IMAGE_GRAYSCALE;
@@ -279,6 +284,7 @@ int parse_ascii_grayscale_image(FILE *file, image_file_t *img_file)
 	return 1;
 }
 
+// aceasta functie citeste datele unei imagini alb-negru dintr-un fisier binar
 int parse_black_white_image(FILE *file, image_file_t *img_file)
 {
 	img_file->type = IMAGE_BLACK_WHITE;
@@ -353,6 +359,9 @@ int parse_black_white_image(FILE *file, image_file_t *img_file)
 	return 1;
 }
 
+// aceasta functie citeste datele imaginii dintr-un fisier
+// citeste primii 2 octeti care reprezinta tipul imaginii
+// si in functie de acestia apeleaza functia corespunzatoare
 int parse_image_file(FILE *file, image_file_t *img_file)
 {
 	char magic[2];
@@ -409,6 +418,7 @@ int parse_image_file(FILE *file, image_file_t *img_file)
 	return 0;
 }
 
+// aceasta functie converteste un numar la un sir de caractere
 char *itoa(int a)
 {
 	int nd = 0;
@@ -435,6 +445,7 @@ char *itoa(int a)
 	return string;
 }
 
+// aceasta functie salveaza o imagine color intr-un fisier binar
 void __save_color_image_binary(image_file_t *img_file, char *filename)
 {
 	FILE *file = fopen(filename, "wb");
@@ -454,7 +465,6 @@ void __save_color_image_binary(image_file_t *img_file, char *filename)
 
 	char *string_height = itoa(img_file->height);
 	fwrite(string_height, strlen(string_height), 1, file);
-	// printf("Free string_height = '%s' (%p)\n", string_height, string_height);
 	free(string_height);
 
 	fwrite(&LF_CHAR, 1, 1, file);
@@ -516,6 +526,7 @@ void __save_color_image_binary(image_file_t *img_file, char *filename)
 	fclose(file);
 }
 
+// aceasta functie salveaza o imagine grayscale intr-un fisier binar
 void __save_grayscale_image_binary(image_file_t *img_file, char *filename)
 {
 	FILE *file = fopen(filename, "wb");
@@ -565,6 +576,7 @@ void __save_grayscale_image_binary(image_file_t *img_file, char *filename)
 	fclose(file);
 }
 
+// aceasta functie salveaza o imagine alb-negru intr-un fisier de tip ascii
 void __save_black_white_image_binary(image_file_t *img_file, char *filename)
 {
 	FILE *file = fopen(filename, "wb");
@@ -611,6 +623,7 @@ void __save_black_white_image_binary(image_file_t *img_file, char *filename)
 	fclose(file);
 }
 
+// aceasta functie salveaza o imagine color intr-un fisier de tip ascii
 void __save_color_image_ascii(image_file_t *img_file, char *filename)
 {
 	FILE *file = fopen(filename, "w");
@@ -649,6 +662,7 @@ void __save_color_image_ascii(image_file_t *img_file, char *filename)
 	fclose(file);
 }
 
+// aceasta functie salveaza o imagine grayscale intr-un fisier de tip ascii
 void __save_grayscale_image_ascii(image_file_t *img_file, char *filename)
 {
 	FILE *file = fopen(filename, "w");
@@ -667,6 +681,7 @@ void __save_grayscale_image_ascii(image_file_t *img_file, char *filename)
 	fclose(file);
 }
 
+// aceasta functie salveaza imaginea intr-un fisier de tip binar
 void save_image_binary(image_file_t *img_file, char *filename)
 {
 	if (img_file->type == IMAGE_GRAYSCALE)
@@ -677,6 +692,7 @@ void save_image_binary(image_file_t *img_file, char *filename)
 		__save_black_white_image_binary(img_file, filename);
 }
 
+// aceasta functie salveaza imaginea intr-un fisier de tip ascii
 void save_image_ascii(image_file_t *img_file, char *filename)
 {
 	if (img_file->type == IMAGE_GRAYSCALE)
@@ -685,6 +701,7 @@ void save_image_ascii(image_file_t *img_file, char *filename)
 		__save_color_image_ascii(img_file, filename);
 }
 
+// aceasta functie elibereaza memoria folosita de imagine
 void free_image_file(image_file_t *img_file)
 {
 	if (img_file->filename) {

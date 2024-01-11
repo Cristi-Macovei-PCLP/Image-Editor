@@ -9,6 +9,10 @@
 #include "defines.h"
 #include "structs.h"
 
+// aceasta functie verifica daca o comanda se incadreaza intr-un anumit tip
+// tipul de verificat este precizat prin parametrul cmd_name
+// aceasta functie returneaza 1 daca comanda este de tipul cautat
+// si 0 daca nu
 int check_command(char *cmd_buffer, char *cmd_name)
 {
 	if (strlen(cmd_buffer) < strlen(cmd_name))
@@ -19,14 +23,19 @@ int check_command(char *cmd_buffer, char *cmd_name)
 		if (cmd_buffer[i] != cmd_name[i])
 			return 0;
 
+	// daca mai are caractere si dupa lungimea tipului de comanda cautat
+	// functia returneaza 0
 	if (isalnum(cmd_buffer[strlen(cmd_name)]))
 		return 0;
 
 	return 1;
 }
 
+// aceasta functie citeste argumentul comenzii load si il salveaza
+// intr-o locatie trimisa prin parametrul ptr_filename
 void get_load_cmd_arg(char *cmd_buffer, char **ptr_filename)
 {
+	// impart comanda in cuvinte folosind strtok
 	char *p = strtok(cmd_buffer, " ");
 	int arg_index = 0;
 	while (p) {
@@ -35,6 +44,7 @@ void get_load_cmd_arg(char *cmd_buffer, char **ptr_filename)
 			continue;
 		}
 
+		// numele fisierului trebuie sa fie primul argument al comenzii
 		if (arg_index == 1) {
 			char *filename = malloc(1 + strlen(p) * sizeof(char));
 			strcpy(filename, p);
@@ -48,13 +58,17 @@ void get_load_cmd_arg(char *cmd_buffer, char **ptr_filename)
 	}
 }
 
+// aceasta functie verifica daca un sir de caractere reprezinta un numar
+// functia returneaza 1 daca da si 0 daca nu
 int is_numerical_string(char *string)
 {
 	int n = strlen(string);
 
+	// primul caracter poate fi '-' sau o cifra
 	if (string[0] != '-' && !isdigit(string[0]))
 		return 0;
 
+	// urmatoarele caractere trebuie sa fie cifre
 	for (int i = 1; i < n; ++i)
 		if (!isdigit(string[i]))
 			return 0;
@@ -62,13 +76,18 @@ int is_numerical_string(char *string)
 	return 1;
 }
 
-// returns
-// 0 if coordinates are invalid
-// 1 if everything is fine
-// 2 if there's not 4 numerical coordinates
+// aceasta functie citeste argumentele comenzii select
+// si returneaza o valoare care arata daca valorile citite sunt corecte
+// valoarea returnata:
+// 0 - coordonatele citite sunt incorecte (in afara imaginii)
+// 1 - coordonatele citite sunt corecte
+// 2 - comanda invalida (nu a primit 4 argumente numerice)
 int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
 						image_file_t *img_file)
 {
+	// impart comanda in cuvinte cu strtok
+	// poate avea un singur argument "ALL"
+	// sau 4 argumente numerice (x1, y1, x2, y2 in aceasta ordine)
 	char *p = strtok(cmd_buffer, " ");
 	int arg_index = 0;
 	ptr_sel->is_all = 0;
@@ -82,6 +101,7 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
 		fprintf(stderr, "[debug] select argument %d = '%s'\n", arg_index, p);
 #endif
 
+		// primul argument poate fi ori "ALL" ori numeric (x1)
 		if (arg_index == 1) {
 			if (strcmp(p, "ALL") == 0) {
 				ptr_sel->is_all = 1;
@@ -136,15 +156,21 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
 	p = strtok(NULL, " ");
 }
 
+	// daca nu avem 4 argumente numerice returneaza 2
 	if (arg_index <= 4)
 		return 2;
 
+	// verifica daca cele 4 valori citite sunt egale
+	// daca sunt egale x1=x2 sau y1=y2, valorile sunt incorecte
 	ptr_sel->is_all = 0;
 	if (ptr_sel->top_left.line == ptr_sel->bot_right.line ||
 		ptr_sel->top_left.col == ptr_sel->bot_right.col) {
 		return 0;
 	}
 
+	// verifica daca x1 < x2
+	// daca nu e adevarat, se face swap intre x1 si x2
+	// la fel la y
 	if (ptr_sel->top_left.line > ptr_sel->bot_right.line) {
 		int tmp = ptr_sel->top_left.line;
 		ptr_sel->top_left.line = ptr_sel->bot_right.line;
@@ -160,6 +186,8 @@ int get_select_cmd_args(char *cmd_buffer, selection_t *ptr_sel,
 	return 1;
 }
 
+// aceasta citeste argumentele pentru histograma
+// returneaza 1 daca argumentele sunt valide si 0 daca nu
 int get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y)
 {
 	char *p = strtok(cmd_buffer, " ");
@@ -189,6 +217,7 @@ int get_histogram_cmd_args(char *cmd_buffer, int *ptr_x, int *ptr_y)
 	return arg_index == 3;
 }
 
+// aceasta functie citeste argumentele comenzii save
 void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,
 					   int *ptr_is_ascii)
 {
@@ -217,6 +246,11 @@ void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,
 	}
 }
 
+// aceasta functie citeste valoarea argumentului comenzii APPLY
+// aceasta valoare poate fi EDGE, SHARPEN, BLUR, GAUSSIAN_BLUR
+// orice alta valoare este incorecta
+// daca comanda APPLY nu are parametru, se pastreaza valoarea
+// de la adresa ptr_arg (care este initializata cu PARAM_NONEXISTENT)
 void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg)
 {
 	char *p = strtok(cmd_buffer, " ");
@@ -246,6 +280,7 @@ void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg)
 	}
 }
 
+// aceasta functie citeste argumentul comenzii rotate
 void get_rotate_cmd_args(char *cmd_buffer, int *ptr_angle)
 {
 	char *p = strtok(cmd_buffer, " ");

@@ -36,8 +36,11 @@ void debug_check_point(image_file_t *img_file, int i, int j)
 }
 #endif
 
+// aceasta functie executa operatia de crop
+// returneaza 1 daca operatia s-a realizat cu succes si 0 daca nu
 int crop_image(image_file_t *img_file, selection_t *sel)
 {
+	// verific daca selectia curenta este corecta
 	if (sel->top_left.line < 0 || sel->top_left.line >= img_file->height)
 		return 0;
 	if (sel->top_left.col < 0 || sel->top_left.col >= img_file->width)
@@ -47,11 +50,13 @@ int crop_image(image_file_t *img_file, selection_t *sel)
 	if (sel->top_left.col < 0 || sel->top_left.col >= img_file->width)
 		return 0;
 
+	// calculez noile dimensiuni
 	int new_width = sel->bot_right.col - sel->top_left.col;
 	int new_height = sel->bot_right.line - sel->top_left.line;
 
 	int old_height = img_file->height;
 
+	// modific dimensiunile imaginii stocate in memorie
 	img_file->width = new_width;
 	img_file->height = new_height;
 
@@ -60,6 +65,7 @@ int crop_image(image_file_t *img_file, selection_t *sel)
 			new_width, new_height);
 #endif
 
+	// operatia de crop se poate realiza in-place, nu e nevoie de o copie
 	for (int i = 0; i < new_height; ++i) {
 		for (int j = 0; j < new_width; ++j) {
 			int line = sel->top_left.line + i;
@@ -85,7 +91,10 @@ int crop_image(image_file_t *img_file, selection_t *sel)
 		}
 	}
 
-	// free memory
+	// in urma operatiei de crop, matricea care contine imaginea
+	// isi schimba dimensiunile
+	// noile dimensiuni vor fi mai mici, deci se poate elibera
+	// memorie care nu mai este folosita
 	for (int i = 0; i < new_height; ++i) {
 		void *new_line = realloc(img_file->mat[i], new_width *
 						 (img_file->type == IMAGE_COLOR ?

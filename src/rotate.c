@@ -37,14 +37,19 @@ void __swap_color(ppm_point_t *a, ppm_point_t *b)
 	*b = tmp;
 }
 
+// aceasta functie calculeaza numarul de rotatii la dreapta necesare
+// pentru a roti cu unghiul dorit
 int __get_num_rotations(int angle)
 {
 	return (4 + ((angle / 90) % 4)) % 4;
 }
 
+// aceasta functie roteste o selectie patrata dintr-o imagine grayscale
+// 90 de grade la dreapta
 void __rotate_square_90_grayscale(pgm_point_t **mat, int start_line,
 								  int start_col, int n)
 {
+	// aloc o copie de dimensiunea selectiei
 	pgm_point_t **aux = malloc(n * sizeof(pgm_point_t *));
 	for (int i = 0; i < n; ++i)
 		aux[i] = malloc(n * sizeof(pgm_point_t));
@@ -57,11 +62,14 @@ void __rotate_square_90_grayscale(pgm_point_t **mat, int start_line,
 		for (int j = 0; j < n; ++j)
 			mat[start_line + i][start_col + j] = aux[n - j - 1][i];
 
+	// eliberez memoria
 	for (int i = 0; i < n; ++i)
 		free(aux[i]);
 	free(aux);
 }
 
+// aceasta functie roteste o selectie patrata dintr-o imagine color
+// 90 de grade la dreapta
 void __rotate_square_90_color(ppm_point_t **mat, int start_line, int start_col,
 							  int n)
 {
@@ -82,6 +90,8 @@ void __rotate_square_90_color(ppm_point_t **mat, int start_line, int start_col,
 	free(aux);
 }
 
+// aceasta functie roteste o selectie patrata 90 de grade la dreapta
+// verifica tipul imaginii si apeleaza functia corespunzatoare
 void __rotate_square_90(void **mat, int start_line, int start_col, int n,
 						int type)
 {
@@ -93,6 +103,7 @@ void __rotate_square_90(void **mat, int start_line, int start_col, int n,
 								 start_col, n);
 }
 
+// aceasta functie roteste o imagine grayscale 90 de grade la dreapta
 pgm_point_t **__rotate_all_90_grayscale(pgm_point_t **mat, int n, int m)
 {
 	pgm_point_t **aux = malloc(m * sizeof(pgm_point_t *));
@@ -110,6 +121,7 @@ pgm_point_t **__rotate_all_90_grayscale(pgm_point_t **mat, int n, int m)
 	return aux;
 }
 
+// aceasta functie roteste o imagine color 90 de grade la dreapta
 ppm_point_t **__rotate_all_90_color(ppm_point_t **mat, int n, int m)
 {
 	ppm_point_t **aux = malloc(m * sizeof(ppm_point_t *));
@@ -127,6 +139,8 @@ ppm_point_t **__rotate_all_90_color(ppm_point_t **mat, int n, int m)
 	return aux;
 }
 
+// aceasta functie roteste intreaga imagine 90 de grade la dreapta
+// verifica tipul imaginii si apeleaza functia corespunzatoare
 void __rotate_all_90(image_file_t *img_file, int type)
 {
 	if (type == IMAGE_COLOR)
@@ -141,11 +155,14 @@ void __rotate_all_90(image_file_t *img_file, int type)
 												  img_file->height,
 												  img_file->width);
 
+	// dupa rotirea cu 90 de grade la dreapta,
+	// dimensiunile imaginii trebuie interschimbate
 	int tmp = img_file->height;
 	img_file->height = img_file->width;
 	img_file->width = tmp;
 }
 
+// roteste o selectie patrata din imagine cu unghiul dorit
 int rotate_square(image_file_t *img_file, selection_t *sel, int angle)
 {
 	int num_t = __get_num_rotations(angle);
@@ -165,6 +182,7 @@ int rotate_square(image_file_t *img_file, selection_t *sel, int angle)
 	return 1;
 }
 
+// roteste intreaga imagine cu unghiul dorit
 int rotate_all(image_file_t *img_file, selection_t *sel, int angle)
 {
 	int num_t = __get_num_rotations(angle);
@@ -172,7 +190,8 @@ int rotate_all(image_file_t *img_file, selection_t *sel, int angle)
 	for (int i = 0; i < num_t; ++i)
 		__rotate_all_90(img_file, img_file->type);
 
-	// flip selection if number of 90 deg rotations is odd ( 1 or 3 )
+	// daca numarul de rotiri este impar (1 sau 3)
+	// se interschimba si valorile selectiei
 	if (num_t % 2 == 1) {
 		int tmp = sel->bot_right.line;
 		sel->bot_right.line = sel->bot_right.col;

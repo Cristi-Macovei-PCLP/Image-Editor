@@ -9,19 +9,23 @@
 #include "math_utils.h"
 #include "structs.h"
 
+// aceasta functie executa operatia de egalizare
 int equalize_image(image_file_t *img_file)
 {
-  // initialise to 256 values of zero
+	// am creat un vector de frecventa initializat pe 0
 	int *freq = calloc(256, sizeof(int));
 
+	// pentru fiecare punct din imagine, incrementez valoarea din vectorul de
+	// frecventa
 	for (int i = 0; i < img_file->height; ++i) {
 		for (int j = 0; j < img_file->width; ++j) {
 			int grayscale_point = ((pgm_point_t **)img_file->mat)[i][j].grey;
 
-		++freq[grayscale_point];
+			++freq[grayscale_point];
 		}
 	}
 
+	// calculez sume partiale, deoarece sunt necesare in formula de egalizare
 	int *sp = calloc(256, sizeof(int));
 	sp[0] = freq[0];
 
