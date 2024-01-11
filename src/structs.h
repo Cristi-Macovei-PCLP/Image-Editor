@@ -1,10 +1,8 @@
 // Macovei Nicolae-Cristian
 // Anul I, grupa 312CAb
 
-// this thing is needed for the preprocessor to not write this header multiple
-// times and throw an error because structures are being re-defined
-// this does the same job as guards, but i like pragma more
-#pragma once
+#ifndef GUARD_STRUCTS_H
+#define GUARD_STRUCTS_H
 
 typedef struct ppm_point {
 	int red;
@@ -33,3 +31,5 @@ typedef struct selection {
 	position_t bot_right;
 	int is_all;
 } selection_t;
+
+#endif

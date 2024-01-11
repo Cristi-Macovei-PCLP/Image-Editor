@@ -1,6 +1,9 @@
 // Macovei Nicolae-Cristian
 // Anul I, grupa 312CAb
 
+#ifndef GUARD_FILE_UTILS_H
+#define GUARD_FILE_UTILS_H
+
 #include <stdio.h>
 
 #include "structs.h"
@@ -12,3 +15,5 @@ void free_image_file(image_file_t *img_file);
 void save_image_binary(image_file_t *img_file, char *filename);
 
 void save_image_ascii(image_file_t *img_file, char *filename);
+
+#endif

@@ -1,6 +1,9 @@
 // Macovei Nicolae-Cristian
 // Anul I, grupa 312CAb
 
+#ifndef GUARD_CMD_UTILS_H
+#define GUARD_CMD_UTILS_H
+
 #include "structs.h"
 
 int check_command(char *cmd_buffer, char *cmd_name);
@@ -18,3 +21,5 @@ void get_save_cmd_args(char *cmd_buffer, char **ptr_filename,
 void get_apply_cmd_args(char *cmd_buffer, int *ptr_arg);
 
 void get_rotate_cmd_args(char *cmd_buffer, int *ptr_angle);
+
+#endif
